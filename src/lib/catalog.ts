@@ -23,7 +23,7 @@ export const plans = [
   { id: 'starter', name: 'STARTER', price: 5000, limit: 50, features: ['Jusqu’à 50 produits', 'Page boutique', 'Gestion des commandes', 'Statistiques de base', 'Support par email'] },
   { id: 'pro', name: 'PRO', price: 10000, limit: 200, features: ['Jusqu’à 200 produits', 'Page boutique premium', 'Promotions et réductions', 'Statistiques avancées', 'Badge boutique vérifiée', 'Support prioritaire'] },
   { id: 'premium', name: 'PREMIUM', price: 20000, limit: null, features: ['Produits illimités*', 'Boutique mise en avant', 'Campagnes publicitaires', 'Statistiques complètes', 'Gestion multi-utilisateurs', 'Badge premium', 'Support VIP'] },
-]
+] as const
 export type CartItem = { id: string; quantity: number; size: string; color: string }
 export const formatMoney = (value: number) => `${new Intl.NumberFormat('fr-FR').format(value)} FCFA`
 export function cartTotals(items: CartItem[]) {

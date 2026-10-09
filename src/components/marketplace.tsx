@@ -28,7 +28,7 @@ export function MarketplaceProvider({ children }: { children: ReactNode }) {
     {message && <div role="status" className="fixed bottom-5 left-1/2 z-50 flex max-w-[calc(100%-28px)] -translate-x-1/2 items-center gap-3 rounded-md border border-border bg-card px-4 py-3 text-sm shadow-lg"><Check className="size-4 shrink-0 text-success"/><span>{message}</span><Button variant="ghost" size="icon" aria-label="Fermer la notification" onClick={() => setMessage('')}><X/></Button></div>}
   </MarketContext.Provider>
 }
-const nav = [['Accueil','/'],['Annonces','/annonces'],['Boutiques','/boutiques'],['Tout Colis','/tout-colis'],['Catégories','/categories'],['Promotions','/promotions'],['Blog','/blog'],['Contact','/contact']] as const
+const nav = [['Accueil','/'],['Annonces','/annonces'],['Boutiques','/boutiques'],['Tout Colis','/tout-colis'],['Catégories','/categories'],['Promotions','/promotions'],['Fiche produit IA','/fiche-produit-ia'],['Contact','/contact']] as const
 export function Header() {
   const { cart } = useMarket()
   const [search, setSearch] = useState('')

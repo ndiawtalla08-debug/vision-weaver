@@ -19,6 +19,7 @@ import { Route as ConditionsRouteImport } from './routes/conditions'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CreerBoutiqueRouteImport } from './routes/creer-boutique'
 import { Route as FavorisRouteImport } from './routes/favoris'
+import { Route as FicheProduitIaRouteImport } from './routes/fiche-produit-ia'
 import { Route as MonCompteRouteImport } from './routes/mon-compte'
 import { Route as PaiementRouteImport } from './routes/paiement'
 import { Route as PanierRouteImport } from './routes/panier'
@@ -78,6 +79,11 @@ const FavorisRoute = FavorisRouteImport.update({
   path: '/favoris',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FicheProduitIaRoute = FicheProduitIaRouteImport.update({
+  id: '/fiche-produit-ia',
+  path: '/fiche-produit-ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MonCompteRoute = MonCompteRouteImport.update({
   id: '/mon-compte',
   path: '/mon-compte',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/creer-boutique': typeof CreerBoutiqueRoute
   '/favoris': typeof FavorisRoute
+  '/fiche-produit-ia': typeof FicheProduitIaRoute
   '/mon-compte': typeof MonCompteRoute
   '/paiement': typeof PaiementRoute
   '/panier': typeof PanierRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/creer-boutique': typeof CreerBoutiqueRoute
   '/favoris': typeof FavorisRoute
+  '/fiche-produit-ia': typeof FicheProduitIaRoute
   '/mon-compte': typeof MonCompteRoute
   '/paiement': typeof PaiementRoute
   '/panier': typeof PanierRoute
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/creer-boutique': typeof CreerBoutiqueRoute
   '/favoris': typeof FavorisRoute
+  '/fiche-produit-ia': typeof FicheProduitIaRoute
   '/mon-compte': typeof MonCompteRoute
   '/paiement': typeof PaiementRoute
   '/panier': typeof PanierRoute
@@ -193,6 +202,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/creer-boutique'
     | '/favoris'
+    | '/fiche-produit-ia'
     | '/mon-compte'
     | '/paiement'
     | '/panier'
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/creer-boutique'
     | '/favoris'
+    | '/fiche-produit-ia'
     | '/mon-compte'
     | '/paiement'
     | '/panier'
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/creer-boutique'
     | '/favoris'
+    | '/fiche-produit-ia'
     | '/mon-compte'
     | '/paiement'
     | '/panier'
@@ -254,6 +266,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CreerBoutiqueRoute: typeof CreerBoutiqueRoute
   FavorisRoute: typeof FavorisRoute
+  FicheProduitIaRoute: typeof FicheProduitIaRoute
   MonCompteRoute: typeof MonCompteRoute
   PaiementRoute: typeof PaiementRoute
   PanierRoute: typeof PanierRoute
@@ -336,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FavorisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fiche-produit-ia': {
+      id: '/fiche-produit-ia'
+      path: '/fiche-produit-ia'
+      fullPath: '/fiche-produit-ia'
+      preLoaderRoute: typeof FicheProduitIaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mon-compte': {
       id: '/mon-compte'
       path: '/mon-compte'
@@ -406,6 +426,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CreerBoutiqueRoute: CreerBoutiqueRoute,
   FavorisRoute: FavorisRoute,
+  FicheProduitIaRoute: FicheProduitIaRoute,
   MonCompteRoute: MonCompteRoute,
   PaiementRoute: PaiementRoute,
   PanierRoute: PanierRoute,

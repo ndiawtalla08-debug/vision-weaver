@@ -232,3 +232,6 @@
   .detail-grid { grid-template-columns: 1fr; }.detail-image { max-height: 320px; }.page-main h1 { font-size: 32px; }
 }
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { transition: none !important; animation: none !important; } }
+.info-grid { grid-template-columns: 1fr 1.2fr 1fr; gap: 10px; }.info-panel { padding: 13px; }.info-panel h2 { font-size: 16px; }.forecast-table { width: 100%; border-collapse: collapse; font-size: 8px; }.forecast-table th,.forecast-table td { padding: 7px 3px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }.forecast-table th:first-child { text-align: left; font-weight: 500; }.forecast-table thead { background: var(--secondary); }.forecast-table tbody tr:last-child { background: var(--primary); font-weight: 700; }.financial-panel { min-width: 0; }
+@media (min-width: 1101px) { .business-grid { grid-template-columns: .85fr 1.15fr; } }
+@media (max-width: 640px) { .info-grid { grid-template-columns: 1fr; }.forecast-table { font-size: 10px; } }

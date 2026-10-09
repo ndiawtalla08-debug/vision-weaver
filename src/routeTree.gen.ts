@@ -10,33 +10,258 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AideRouteImport } from './routes/aide'
+import { Route as AnnoncesRouteImport } from './routes/annonces'
+import { Route as BlogRouteImport } from './routes/blog'
+import { Route as BoutiquesRouteImport } from './routes/boutiques'
+import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as ConditionsRouteImport } from './routes/conditions'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CreerBoutiqueRouteImport } from './routes/creer-boutique'
+import { Route as FavorisRouteImport } from './routes/favoris'
+import { Route as MonCompteRouteImport } from './routes/mon-compte'
+import { Route as PaiementRouteImport } from './routes/paiement'
+import { Route as PanierRouteImport } from './routes/panier'
+import { Route as PromotionsRouteImport } from './routes/promotions'
+import { Route as SuiviRouteImport } from './routes/suivi'
+import { Route as ToutColisRouteImport } from './routes/tout-colis'
+import { Route as BoutiqueIdRouteImport } from './routes/boutique.$id'
+import { Route as ProduitIdRouteImport } from './routes/produit.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AideRoute = AideRouteImport.update({
+  id: '/aide',
+  path: '/aide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnnoncesRoute = AnnoncesRouteImport.update({
+  id: '/annonces',
+  path: '/annonces',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoutiquesRoute = BoutiquesRouteImport.update({
+  id: '/boutiques',
+  path: '/boutiques',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesRoute = CategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConditionsRoute = ConditionsRouteImport.update({
+  id: '/conditions',
+  path: '/conditions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreerBoutiqueRoute = CreerBoutiqueRouteImport.update({
+  id: '/creer-boutique',
+  path: '/creer-boutique',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavorisRoute = FavorisRouteImport.update({
+  id: '/favoris',
+  path: '/favoris',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonCompteRoute = MonCompteRouteImport.update({
+  id: '/mon-compte',
+  path: '/mon-compte',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaiementRoute = PaiementRouteImport.update({
+  id: '/paiement',
+  path: '/paiement',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanierRoute = PanierRouteImport.update({
+  id: '/panier',
+  path: '/panier',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromotionsRoute = PromotionsRouteImport.update({
+  id: '/promotions',
+  path: '/promotions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuiviRoute = SuiviRouteImport.update({
+  id: '/suivi',
+  path: '/suivi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToutColisRoute = ToutColisRouteImport.update({
+  id: '/tout-colis',
+  path: '/tout-colis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoutiqueIdRoute = BoutiqueIdRouteImport.update({
+  id: '/boutique/$id',
+  path: '/boutique/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProduitIdRoute = ProduitIdRouteImport.update({
+  id: '/produit/$id',
+  path: '/produit/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aide': typeof AideRoute
+  '/annonces': typeof AnnoncesRoute
+  '/blog': typeof BlogRoute
+  '/boutiques': typeof BoutiquesRoute
+  '/categories': typeof CategoriesRoute
+  '/conditions': typeof ConditionsRoute
+  '/contact': typeof ContactRoute
+  '/creer-boutique': typeof CreerBoutiqueRoute
+  '/favoris': typeof FavorisRoute
+  '/mon-compte': typeof MonCompteRoute
+  '/paiement': typeof PaiementRoute
+  '/panier': typeof PanierRoute
+  '/promotions': typeof PromotionsRoute
+  '/suivi': typeof SuiviRoute
+  '/tout-colis': typeof ToutColisRoute
+  '/boutique/$id': typeof BoutiqueIdRoute
+  '/produit/$id': typeof ProduitIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aide': typeof AideRoute
+  '/annonces': typeof AnnoncesRoute
+  '/blog': typeof BlogRoute
+  '/boutiques': typeof BoutiquesRoute
+  '/categories': typeof CategoriesRoute
+  '/conditions': typeof ConditionsRoute
+  '/contact': typeof ContactRoute
+  '/creer-boutique': typeof CreerBoutiqueRoute
+  '/favoris': typeof FavorisRoute
+  '/mon-compte': typeof MonCompteRoute
+  '/paiement': typeof PaiementRoute
+  '/panier': typeof PanierRoute
+  '/promotions': typeof PromotionsRoute
+  '/suivi': typeof SuiviRoute
+  '/tout-colis': typeof ToutColisRoute
+  '/boutique/$id': typeof BoutiqueIdRoute
+  '/produit/$id': typeof ProduitIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aide': typeof AideRoute
+  '/annonces': typeof AnnoncesRoute
+  '/blog': typeof BlogRoute
+  '/boutiques': typeof BoutiquesRoute
+  '/categories': typeof CategoriesRoute
+  '/conditions': typeof ConditionsRoute
+  '/contact': typeof ContactRoute
+  '/creer-boutique': typeof CreerBoutiqueRoute
+  '/favoris': typeof FavorisRoute
+  '/mon-compte': typeof MonCompteRoute
+  '/paiement': typeof PaiementRoute
+  '/panier': typeof PanierRoute
+  '/promotions': typeof PromotionsRoute
+  '/suivi': typeof SuiviRoute
+  '/tout-colis': typeof ToutColisRoute
+  '/boutique/$id': typeof BoutiqueIdRoute
+  '/produit/$id': typeof ProduitIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/aide'
+    | '/annonces'
+    | '/blog'
+    | '/boutiques'
+    | '/categories'
+    | '/conditions'
+    | '/contact'
+    | '/creer-boutique'
+    | '/favoris'
+    | '/mon-compte'
+    | '/paiement'
+    | '/panier'
+    | '/promotions'
+    | '/suivi'
+    | '/tout-colis'
+    | '/boutique/$id'
+    | '/produit/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/aide'
+    | '/annonces'
+    | '/blog'
+    | '/boutiques'
+    | '/categories'
+    | '/conditions'
+    | '/contact'
+    | '/creer-boutique'
+    | '/favoris'
+    | '/mon-compte'
+    | '/paiement'
+    | '/panier'
+    | '/promotions'
+    | '/suivi'
+    | '/tout-colis'
+    | '/boutique/$id'
+    | '/produit/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/aide'
+    | '/annonces'
+    | '/blog'
+    | '/boutiques'
+    | '/categories'
+    | '/conditions'
+    | '/contact'
+    | '/creer-boutique'
+    | '/favoris'
+    | '/mon-compte'
+    | '/paiement'
+    | '/panier'
+    | '/promotions'
+    | '/suivi'
+    | '/tout-colis'
+    | '/boutique/$id'
+    | '/produit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AideRoute: typeof AideRoute
+  AnnoncesRoute: typeof AnnoncesRoute
+  BlogRoute: typeof BlogRoute
+  BoutiquesRoute: typeof BoutiquesRoute
+  CategoriesRoute: typeof CategoriesRoute
+  ConditionsRoute: typeof ConditionsRoute
+  ContactRoute: typeof ContactRoute
+  CreerBoutiqueRoute: typeof CreerBoutiqueRoute
+  FavorisRoute: typeof FavorisRoute
+  MonCompteRoute: typeof MonCompteRoute
+  PaiementRoute: typeof PaiementRoute
+  PanierRoute: typeof PanierRoute
+  PromotionsRoute: typeof PromotionsRoute
+  SuiviRoute: typeof SuiviRoute
+  ToutColisRoute: typeof ToutColisRoute
+  BoutiqueIdRoute: typeof BoutiqueIdRoute
+  ProduitIdRoute: typeof ProduitIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +273,147 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aide': {
+      id: '/aide'
+      path: '/aide'
+      fullPath: '/aide'
+      preLoaderRoute: typeof AideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/annonces': {
+      id: '/annonces'
+      path: '/annonces'
+      fullPath: '/annonces'
+      preLoaderRoute: typeof AnnoncesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boutiques': {
+      id: '/boutiques'
+      path: '/boutiques'
+      fullPath: '/boutiques'
+      preLoaderRoute: typeof BoutiquesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories': {
+      id: '/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conditions': {
+      id: '/conditions'
+      path: '/conditions'
+      fullPath: '/conditions'
+      preLoaderRoute: typeof ConditionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/creer-boutique': {
+      id: '/creer-boutique'
+      path: '/creer-boutique'
+      fullPath: '/creer-boutique'
+      preLoaderRoute: typeof CreerBoutiqueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favoris': {
+      id: '/favoris'
+      path: '/favoris'
+      fullPath: '/favoris'
+      preLoaderRoute: typeof FavorisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mon-compte': {
+      id: '/mon-compte'
+      path: '/mon-compte'
+      fullPath: '/mon-compte'
+      preLoaderRoute: typeof MonCompteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paiement': {
+      id: '/paiement'
+      path: '/paiement'
+      fullPath: '/paiement'
+      preLoaderRoute: typeof PaiementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panier': {
+      id: '/panier'
+      path: '/panier'
+      fullPath: '/panier'
+      preLoaderRoute: typeof PanierRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/promotions': {
+      id: '/promotions'
+      path: '/promotions'
+      fullPath: '/promotions'
+      preLoaderRoute: typeof PromotionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/suivi': {
+      id: '/suivi'
+      path: '/suivi'
+      fullPath: '/suivi'
+      preLoaderRoute: typeof SuiviRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tout-colis': {
+      id: '/tout-colis'
+      path: '/tout-colis'
+      fullPath: '/tout-colis'
+      preLoaderRoute: typeof ToutColisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boutique/$id': {
+      id: '/boutique/$id'
+      path: '/boutique/$id'
+      fullPath: '/boutique/$id'
+      preLoaderRoute: typeof BoutiqueIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produit/$id': {
+      id: '/produit/$id'
+      path: '/produit/$id'
+      fullPath: '/produit/$id'
+      preLoaderRoute: typeof ProduitIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AideRoute: AideRoute,
+  AnnoncesRoute: AnnoncesRoute,
+  BlogRoute: BlogRoute,
+  BoutiquesRoute: BoutiquesRoute,
+  CategoriesRoute: CategoriesRoute,
+  ConditionsRoute: ConditionsRoute,
+  ContactRoute: ContactRoute,
+  CreerBoutiqueRoute: CreerBoutiqueRoute,
+  FavorisRoute: FavorisRoute,
+  MonCompteRoute: MonCompteRoute,
+  PaiementRoute: PaiementRoute,
+  PanierRoute: PanierRoute,
+  PromotionsRoute: PromotionsRoute,
+  SuiviRoute: SuiviRoute,
+  ToutColisRoute: ToutColisRoute,
+  BoutiqueIdRoute: BoutiqueIdRoute,
+  ProduitIdRoute: ProduitIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

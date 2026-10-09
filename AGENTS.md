@@ -13,3 +13,4 @@
 - Keep the initial marketplace in a shared frontend shell with leaf routes for content pages, so navigation and cart state remain consistent.
 - Isolate demonstration catalog and pricing calculations in a browser-safe module; production data and authoritative order totals must replace it after backend approval.
 - Never turn demonstration checkout or tracking into a real success state without a verified provider or stored order.
+- Pre-optimize the marketplace UI dependencies and reject outdated optimization requests so preview reloads cannot mix different React module instances.

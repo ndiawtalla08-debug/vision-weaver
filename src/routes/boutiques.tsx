@@ -6,4 +6,4 @@ export const Route = createFileRoute('/boutiques')({
  validateSearch: (search: Record<string, unknown>): { q?: string } => typeof search['q'] === 'string' ? { q: search['q'] } : {},
  component: Page,
 })
-function Page() { const { q } = Route.useSearch(); return <CatalogPage query={q}/> }
+function Page() { const { q } = Route.useSearch(); return <CatalogPage query={q ?? ''}/> }

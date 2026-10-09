@@ -6,4 +6,4 @@ export const Route = createFileRoute('/creer-boutique')({
  validateSearch: (search: Record<string, unknown>): { formule?: string } => typeof search['formule'] === 'string' ? { formule: search['formule'] } : {},
  component: Page,
 })
-function Page() { const { formule } = Route.useSearch(); return <SubscribePage formula={formule}/> }
+function Page() { const { formule } = Route.useSearch(); return <SubscribePage formula={formule ?? 'pro'}/> }

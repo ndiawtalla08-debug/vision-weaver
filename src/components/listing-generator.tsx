@@ -1,16 +1,19 @@
 import { useState } from 'react'
 import { useServerFn } from '@tanstack/react-start'
-import { Loader2, Sparkles, Upload } from 'lucide-react'
+import { Check, Loader2, Save, Sparkles, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { generateListing, type Listing } from '@/lib/listing.functions'
+import { generateListing, saveListing, type Listing } from '@/lib/listing.functions'
 
 export function ListingGenerator() {
   const run = useServerFn(generateListing)
+  const save = useServerFn(saveListing)
   const [image, setImage] = useState('')
   const [form, setForm] = useState({ name: '', category: 'Mode', price: '', details: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [listing, setListing] = useState<Listing | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
   const field = 'w-full rounded-md border border-border bg-card px-3 py-2 text-sm'
   const onFile = (file?: File) => {
     if (!file) return
@@ -19,10 +22,17 @@ export function ListingGenerator() {
   }
   const submit = async (e: React.FormEvent) => {
     e.preventDefault(); if (!image) return setError('Ajoutez une photo du produit.')
-    setLoading(true); setError(''); setListing(null)
+    setLoading(true); setError(''); setListing(null); setSaved(false)
     try { const r = await run({ data: { image, ...form } }); r.ok ? setListing(r.listing) : setError(r.error) }
     catch (err) { setError(err instanceof Error ? err.message : 'Rédaction impossible.') }
     finally { setLoading(false) }
+  }
+  const saveToCatalog = async () => {
+    if (!listing) return
+    setSaving(true); setError('')
+    try { const r = await save({ data: { input: { image, ...form }, listing } }); r.ok ? setSaved(true) : setError(r.error ?? 'Enregistrement impossible.') }
+    catch { setError('Enregistrement impossible, réessayez.') }
+    finally { setSaving(false) }
   }
   return <div className="grid gap-8 md:grid-cols-2">
     <form onSubmit={submit} className="space-y-4">
@@ -47,7 +57,11 @@ export function ListingGenerator() {
         <div><h3 className="mb-2 font-semibold">Points forts</h3><ul className="list-disc space-y-1 pl-5">{listing.highlights.map(h => <li key={h}>{h}</li>)}</ul></div>
         <div><h3 className="mb-2 font-semibold">Caractéristiques</h3><ul className="list-disc space-y-1 pl-5">{listing.specifications.map(s => <li key={s}>{s}</li>)}</ul></div>
         <div className="flex flex-wrap gap-2">{listing.tags.map(t => <span key={t} className="rounded bg-muted px-2 py-1 text-xs">#{t}</span>)}</div>
-        <Button variant="outline" onClick={() => navigator.clipboard.writeText(`${listing.title}\n\n${listing.description}\n\n${listing.highlights.map(h => `• ${h}`).join('\n')}`)}>Copier la fiche</Button>
+        <div className="flex flex-wrap gap-3">
+          <Button onClick={saveToCatalog} disabled={saving || saved}>{saving ? <Loader2 className="animate-spin"/> : saved ? <Check/> : <Save/>}{saved ? 'Fiche enregistrée au catalogue' : saving ? 'Enregistrement…' : 'Enregistrer dans le catalogue'}</Button>
+          <Button variant="outline" onClick={() => navigator.clipboard.writeText(`${listing.title}\n\n${listing.description}\n\n${listing.highlights.map(h => `• ${h}`).join('\n')}`)}>Copier la fiche</Button>
+        </div>
+        {saved && <p className="text-sm text-success">La fiche est visible dans le catalogue, rubrique « Tous les produits ».</p>}
       </article> : <p className="text-sm text-muted-foreground">La fiche rédigée apparaîtra ici. Relisez-la avant de la publier.</p>}
     </div>
   </div>

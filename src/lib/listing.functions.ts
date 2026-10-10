@@ -57,3 +57,26 @@ export const generateListing = createServerFn({ method: 'POST' })
     if (failure) return { ok: false, error: failure }
     try { return { ok: true, listing: JSON.parse(text) as Listing } } catch { return { ok: false, error: 'Réponse du modèle illisible, réessayez.' } }
   })
+
+export const saveListing = createServerFn({ method: 'POST' })
+  .inputValidator((input: { input: ListingInput; listing: Listing }) => {
+    if (!input?.listing?.title || !input?.input?.name) throw new Error('Fiche incomplète.')
+    return input
+  })
+  .handler(async ({ data }): Promise<{ ok: boolean; error?: string }> => {
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server')
+    const price = Number(String(data.input.price).replace(/\D/g, '')) || 0
+    const { error } = await supabaseAdmin.from('products').insert({
+      name: data.input.name.slice(0, 120),
+      title: data.listing.title.slice(0, 120),
+      description: data.listing.description,
+      price,
+      category: data.input.category.slice(0, 60),
+      highlights: data.listing.highlights,
+      specifications: data.listing.specifications,
+      tags: data.listing.tags,
+      image_data: data.input.image,
+    })
+    if (error) return { ok: false, error: 'Enregistrement impossible, réessayez.' }
+    return { ok: true }
+  })

@@ -1,0 +1,14 @@
+name = "toutsuite-api"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Adresse du site autorisée à appeler l'API (séparer par des virgules).
+ALLOWED_ORIGINS = "https://vision-display-store.lovable.app"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "toutsuite-db"
+# À REMPLIR : Cloudflare > Storage & Databases > D1 SQL Database > toutsuite-db > Database ID
+database_id = ""
+migrations_dir = "migrations"

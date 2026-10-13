@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "migrate:local": "wrangler d1 migrations apply toutsuite-db --local",
-    "migrate:remote": "wrangler d1 migrations apply toutsuite-db --remote",
+    "migrate:local": "wrangler d1 migrations apply toutsuite-annonces-db --local",
+    "migrate:remote": "wrangler d1 migrations apply toutsuite-annonces-db --remote",
     "deploy": "wrangler deploy"
   },
   "devDependencies": {

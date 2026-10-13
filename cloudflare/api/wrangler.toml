@@ -6,9 +6,9 @@ compatibility_date = "2026-10-01"
 # Adresse du site autorisée à appeler l'API (séparer par des virgules).
 ALLOWED_ORIGINS = "https://vision-display-store.lovable.app"
 
+# Base D1 existante (ne pas en créer une nouvelle).
 [[d1_databases]]
 binding = "DB"
-database_name = "toutsuite-db"
-# À REMPLIR : Cloudflare > Storage & Databases > D1 SQL Database > toutsuite-db > Database ID
-database_id = ""
+database_name = "toutsuite-annonces-db"
+database_id = "5ec829c9-4e94-4ec7-92e1-41e1173bc239"
 migrations_dir = "migrations"

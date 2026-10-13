@@ -34,8 +34,12 @@ export default {
     let res: Response
     try {
       if (url.pathname === '/health') {
-        await env.DB.prepare('SELECT 1').first()
-        res = json({ ok: true, database: 'connected' })
+        // Vraie requête SQL sur D1 : vérifie la connexion ET la présence des tables migrées.
+        const ping = await env.DB.prepare('SELECT 1 AS ok').first<{ ok: number }>()
+        const { results } = await env.DB.prepare(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('users','user_profiles','stores','categories','products','announcements','favorites')").all<{ name: string }>()
+        const tables = results.map(t => t.name).sort()
+        res = json({ ok: ping?.ok === 1, database: ping?.ok === 1 ? 'connected' : 'error', tables, migrated: tables.length === 7 }, ping?.ok === 1 ? 200 : 503)
       } else {
         const found = routes.map(([m, p, h]) => ({ m, h, params: match(p, url.pathname) })).find(x => x.params && x.m === req.method)
         if (!found) throw new HttpError(404, 'Route inconnue.')
@@ -43,7 +47,8 @@ export default {
         res = await found.h(ctx)
       }
     } catch (e) {
-      if (e instanceof HttpError) res = json({ error: e.message }, e.status)
+      if (url.pathname === '/health') { console.error(e); res = json({ ok: false, database: 'unreachable' }, 503) }
+      else if (e instanceof HttpError) res = json({ error: e.message }, e.status)
       else if (String(e).includes('UNIQUE')) res = json({ error: 'Cette valeur existe déjà.' }, 409)
       else { console.error(e); res = json({ error: 'Erreur serveur.' }, 500) }
     }

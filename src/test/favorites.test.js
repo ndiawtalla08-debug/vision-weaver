@@ -1,17 +1,16 @@
 import { describe, it, expect, vi } from 'vitest'
 import { routes } from '../../cloudflare/api/src/modules'
-import type { Ctx } from '../../cloudflare/api/src/lib'
 import { favoriteInput } from '@/lib/favorites-schema'
 
-function context(method: string, payload: unknown, user: Ctx['user']) {
-  const bindings: unknown[][] = []
-  const sql: string[] = []
-  const statement = { bind: (...values: unknown[]) => { bindings.push(values); return statement }, all: async () => ({ results: [] }), run: async () => ({ success: true }) }
-  const prepare = vi.fn((query: string) => { sql.push(query); return statement })
+function context(method, payload, user) {
+  const bindings = []
+  const sql = []
+  const statement = { bind: (...values) => { bindings.push(values); return statement }, all: async () => ({ results: [] }), run: async () => ({ success: true }) }
+  const prepare = vi.fn((query) => { sql.push(query); return statement })
   const req = new Request('https://example.org/favorites', { method, ...(method === 'GET' ? {} : { body: JSON.stringify(payload) }) })
-  return { c: { req, user, params: {}, url: new URL(req.url), env: { DB: { prepare }, ALLOWED_ORIGINS: '' } } as unknown as Ctx, bindings, sql, prepare }
+  return { c: { req, user, params: {}, url: new URL(req.url), env: { DB: { prepare }, ALLOWED_ORIGINS: '' } }, bindings, sql, prepare }
 }
-function handler(method: string) { const route = routes.find(r => r[0] === method && r[1] === '/favorites'); if (!route) throw new Error('Missing favorites handler'); return route[2] }
+function handler(method) { const route = routes.find(r => r[0] === method && r[1] === '/favorites'); if (!route) throw new Error('Missing favorites handler'); return route[2] }
 describe('D1 favorite ownership', () => {
   for (const method of ['GET', 'POST', 'DELETE']) {
     it(`rejects unauthenticated ${method} before querying D1`, async () => {

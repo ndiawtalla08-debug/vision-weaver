@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { MarketplaceProvider } from '@/components/marketplace';
+import { d1CatalogOptions } from '@/lib/d1-catalog';
 
 function NotFoundComponent() {
   return (
@@ -75,6 +76,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: ({ context }) => context.queryClient.ensureQueryData(d1CatalogOptions),
   head: () => ({
     meta: [
       { charSet: "utf-8" },

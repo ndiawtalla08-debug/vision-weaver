@@ -13,12 +13,13 @@ export const products = [
   { id: 'sac-bandouliere', name: 'Sac bandoulière', price: 22000, oldPrice: 0, discount: 0, image: blackBag, category: 'Mode', store: 'SO FAB CLOSET', rating: '4,6', stock: 7 },
   { id: 'smartphone', name: 'Smartphone', price: 150000, oldPrice: 0, discount: 0, image: phone, category: 'Électronique', store: 'TECH DAKAR', rating: '4,9', stock: 5 },
 ]
-export type Product = typeof products[number]
+export type Product = typeof products[number] & { description?: string }
 export const shops = [
   { id: 'so-fab-closet', name: 'SO FAB CLOSET', category: 'Mode · Parfums · Accessoires', image: pinkDress, subtitle: 'Votre style, votre signature.', rating: '4,8', count: 120 },
   { id: 'touba-essence', name: 'TOUBA ESSENCE', category: 'Parfums · Beauté', image: perfume, subtitle: 'L’essence de votre élégance.', rating: '4,9', count: 85 },
   { id: 'tech-dakar', name: 'TECH DAKAR', category: 'Téléphones · High-Tech', image: phone, subtitle: 'La technologie à portée de main.', rating: '4,7', count: 96 },
 ]
+export type Shop = typeof shops[number]
 export const plans = [
   { id: 'starter', name: 'STARTER', price: 5000, limit: 50, features: ['Jusqu’à 50 produits', 'Page boutique personnalisée', 'Gestion des commandes', 'Statistiques de base', 'Support par email'] },
   { id: 'pro', name: 'PRO', price: 10000, limit: 200, features: ['Jusqu’à 200 produits', 'Page boutique premium', 'Promotions et réductions', 'Statistiques avancées', 'Badge boutique vérifiée', 'Support prioritaire'] },
@@ -26,8 +27,8 @@ export const plans = [
 ] as const
 export type CartItem = { id: string; quantity: number; size: string; color: string }
 export const formatMoney = (value: number) => `${new Intl.NumberFormat('fr-FR').format(value)} FCFA`
-export function cartTotals(items: CartItem[]) {
-  const subtotal = items.reduce((total, item) => total + (products.find(p => p.id === item.id)?.price ?? 0) * item.quantity, 0)
+export function cartTotals(items: CartItem[], catalog: Product[] = products) {
+   const subtotal = items.reduce((total, item) => total + (catalog.find(p => p.id === item.id)?.price ?? 0) * item.quantity, 0)
   const delivery = subtotal > 0 ? 2000 : 0
   return { subtotal, delivery, total: subtotal + delivery }
 }

@@ -5,8 +5,9 @@
 - [x] Enregistrer les fiches produit IA dans le catalogue (Lovable Cloud activé, test complet validé).
 - [x] Relier la lecture des boutiques, produits, catégories et annonces à D1 ; conserver les fiches IA et vérifier les pages.
 - [x] Relier les favoris produits et annonces D1 à une session vérifiée côté serveur ; tests de contrôle d’accès réussis.
-- [ ] Confirmer l’ajout, le rechargement et la suppression des favoris avec un compte D1 réel : session de test D1 non disponible.
+- [x] Confirmer l’ajout, le rechargement et la suppression des favoris avec un compte D1 réel.
 - [ ] Comptes vendeurs : restreindre l’ajout de produits aux vendeurs connectés (insertion actuellement ouverte à tous).
 - [ ] Connexion des comptes, commandes et administration : Lovable Cloud activé, authentification à mettre en place.
 - [ ] Paiements réels : nécessite les comptes et identifiants officiels des prestataires.
-- [ ] Corriger l’inscription D1, la session et la récupération du profil ; tester sur l’API réelle.
+- [x] Corriger l’inscription D1, la session et la récupération du profil ; tester sur l’API réelle.
+- [ ] Déployer la version Workers qui retourne directement le jeton à l’inscription : déploiement manuel requis ; le site fonctionne déjà via inscription puis connexion.

@@ -8,10 +8,10 @@ function setup(method, path, data = payload, user = {id:'alice',email:'alice@exa
   const statements = [], writes = []
   const db = { prepare(sql) {
     const s = {sql,values:[],bind(...values) {this.values=values;return this},async first() {
-      if (sql.includes('SELECT id, store_id FROM products')) return options.missingProduct ? null : {id:'product-alice',store_id:'store-alice'}
+      if (sql.includes('SELECT id, store_id')) return options.missingProduct ? null : {id:'product-alice',store_id:'store-alice',status:'published'}
       if (sql.includes('SELECT id, status FROM stores')) return options.missingStore ? null : {id:'store-alice',status:'active'}
-      if (sql.includes('SELECT 1 FROM stores')) return user?.id === 'alice' ? {ok:1} : null
-      if (sql.includes('SELECT id FROM categories')) return null
+      if (sql.includes('SELECT 1 FROM stores')) return user?.id === 'alice' || options.manager ? {ok:1} : null
+      if (sql.includes('SELECT id FROM categories')) return options.category ? {id:options.category} : null
       return null
     },async all() {return {results:[]}},async run() {writes.push(this);return {success:true}} }; statements.push(s);return s
   },async batch(items) {writes.push(...items);return []} }
@@ -70,4 +70,33 @@ describe('D1 seller products', () => {
     const r=await worker.fetch(new Request('https://example.org/me/stores'),{DB:{prepare(){throw new Error('Unexpected DB query')}},ALLOWED_ORIGINS:''})
     expect(r.status).toBe(401)
   })
+  it('registers exactly one PATCH product route', () => {
+    expect(routes.filter(r => r[0] === 'PATCH' && r[1] === '/products/:id')).toHaveLength(1)
+  })
+  it('returns 404 for PATCH of a nonexistent product without writing', async () => {
+    const t=setup('PATCH','/products/product-alice',{status:'draft'},undefined,{missingProduct:true})
+    await expect(t.run()).rejects.toMatchObject({status:404});expect(t.writes).toHaveLength(0)
+  })
+  it('allows an authorized manager to update only a name without clearing other fields or images', async () => {
+    const t=setup('PATCH','/products/product-alice',{name:'Nouveau nom'},{id:'manager',email:'manager@example.org',role:'user'},{manager:true})
+    const result=await (await t.run()).json()
+    expect(t.writes).toHaveLength(1);expect(t.writes[0].values).toEqual(['Nouveau nom','product-alice','store-alice'])
+    expect(result.status).toBe('published')
+  })
+  for (const status of ['draft','published']) {
+    it(`allows a status-only transition to ${status}`, async () => {
+      const t=setup('PATCH','/products/product-alice',{status});const result=await (await t.run()).json()
+      expect(result.status).toBe(status);expect(t.writes[0].values).toEqual([status,'product-alice','store-alice'])
+    })
+  }
+  it('updates an existing category and clears the old price explicitly', async () => {
+    const t=setup('PATCH','/products/product-alice',{category_id:'mode',old_price:null},undefined,{category:'mode'})
+    await t.run();expect(t.writes[0].values).toEqual(['mode',null,'product-alice','store-alice'])
+  })
+  for (const data of [{name:'  '},{price:-1},{price:1.5},{old_price:-1},{stock:-1},{category_id:'missing'},{status:'archived'},{user_id:'bob'},{}]) {
+    it(`rejects invalid PATCH ${JSON.stringify(data)} before writing`, async () => {
+      const t=setup('PATCH','/products/product-alice',data)
+      await expect(t.run()).rejects.toMatchObject({status:400});expect(t.writes).toHaveLength(0)
+    })
+  }
 })

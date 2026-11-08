@@ -48,3 +48,21 @@ npx wrangler login
 npm run deploy
 ```
 Aucune nouvelle base ni migration n'est nécessaire pour cette correction.
+
+## Gestion des produits vendeurs
+Le site conserve les fiches IA existantes ; les nouveaux produits du formulaire « Mes produits » sont écrits uniquement dans D1.
+Déployer le Worker existant avec `npm run deploy` pour activer ces nouveaux endpoints (aucune migration nécessaire) :
+- `GET /me/stores` : boutiques dont la session est propriétaire ou gérant.
+- `GET /me/products?store=ID` : tous les produits, brouillons inclus, après contrôle de la boutique.
+- `POST /products` : `store_id`, `category_id`, `name`, `description`, `price`, `old_price`, `stock`, `status` (`draft` ou `published`), `image`.
+- `PATCH /products/ID` : les mêmes champs ; `store_id` ne peut pas changer.
+- `DELETE /products/ID` : contrôle de la boutique réelle du produit avant suppression.
+- `GET /products?store=ID` : uniquement les produits publiés d’une boutique active, accessible au public.
+
+Les identifiants sont vérifiés avant toute écriture. Le propriétaire ou gérant est lu depuis `stores`/`store_members`, jamais depuis un identifiant utilisateur fourni par le navigateur. Les photos HTTPS ou JPG/PNG/WebP intégrées sont conservées dans `product_images` dans le même lot que l’écriture du produit ; le formulaire limite les fichiers à 500 Ko. Les boutiques en attente ne deviennent pas publiques lors de la publication d’un produit.
+
+### Vérification après déploiement
+Se connecter avec deux comptes ayant chacun leur propre boutique ; relever les IDs retournés par `/me/stores`.
+Créer un brouillon avec une photo, confirmer sa présence dans `/me/products?store=ID` et son absence dans `/products?store=ID`.
+Modifier le produit, le publier, contrôler tous les champs et la photo via la lecture publique ; tenter sa modification et sa suppression avec la session de l’autre vendeur (403 attendu), puis supprimer le produit avec la session propriétaire et confirmer son absence.
+Ne jamais utiliser ni modifier les produits existants pour ces essais : créer un produit temporaire explicitement identifié comme test.

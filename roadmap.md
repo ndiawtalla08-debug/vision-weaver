@@ -9,3 +9,4 @@
 - [ ] Comptes vendeurs : restreindre l’ajout de produits aux vendeurs connectés (insertion actuellement ouverte à tous).
 - [ ] Connexion des comptes, commandes et administration : Lovable Cloud activé, authentification à mettre en place.
 - [ ] Paiements réels : nécessite les comptes et identifiants officiels des prestataires.
+- [ ] Corriger l’inscription D1, la session et la récupération du profil ; tester sur l’API réelle.

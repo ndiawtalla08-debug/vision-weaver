@@ -11,3 +11,5 @@
 - [ ] Paiements réels : nécessite les comptes et identifiants officiels des prestataires.
 - [x] Corriger l’inscription D1, la session et la récupération du profil ; tester sur l’API réelle.
 - [ ] Déployer la version Workers qui retourne directement le jeton à l’inscription : déploiement manuel requis ; le site fonctionne déjà via inscription puis connexion.
+- [ ] Finaliser les produits vendeurs D1 : création, modification, suppression, brouillon/publication et liste publique par identifiant de boutique.
+- [ ] Vérifier les opérations produits et les droits sur l’API Cloudflare déployée.

@@ -16,3 +16,4 @@
 - Pre-optimize the marketplace UI dependencies and reject outdated optimization requests so preview reloads cannot mix different React module instances.
 - AI-generated product sheets remain in public.products and merge with the live D1 products via useSavedProducts; never move them implicitly.
 - Public D1 catalog reads use a fixed-endpoint server function and a shared cached root query, so preview CORS restrictions do not block browsing; demo fixtures are for tests only.
+- D1 account sessions use a same-origin HttpOnly cookie; favorites server functions validate the token through /me and never accept a user ID, while D1 scopes every operation to the authenticated owner.

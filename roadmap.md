@@ -1,4 +1,5 @@
 # TOUT∞SUITE ANNONCES
+- [ ] Finaliser Mes produits : lecture /my/products, images R2, compteurs, actualisation et opérations protégées ; vérifier l’API réelle sans exposer les jetons.
 - [x] Reproduire l’accueil et les sections de la maquette.
 - [x] Ajouter les parcours de démonstration boutique, produit, favoris, panier et paiement indisponible.
 - [x] Vérifier les tarifs, les calculs du panier et l’affichage.

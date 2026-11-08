@@ -112,6 +112,56 @@ r('PATCH', '/admin/stores/:id', async c => {
 })
 
 // ---------- Produits ----------
+r('PATCH', '/products/:id', async c => {
+  requireUser(c)
+  const productId = str(c.params['id'], 'identifiant produit', 64)
+  if (!productId || !/^[A-Za-z0-9_-]+$/.test(productId)) throw new HttpError(400, 'Identifiant produit invalide.')
+  const product = await c.env.DB.prepare('SELECT id, store_id, status FROM products WHERE id = ?').bind(productId)
+    .first<{ id: string; store_id: string; status: string }>()
+  if (!product) throw new HttpError(404, 'Produit introuvable.')
+  await requireStoreManager(c, product.store_id)
+  const store = await c.env.DB.prepare('SELECT id, status FROM stores WHERE id = ?').bind(product.store_id).first<{ id: string; status: string }>()
+  if (!store) throw new HttpError(404, 'Boutique introuvable.')
+  if (store.status === 'suspended') throw new HttpError(403, 'Boutique suspendue.')
+  const b = await body(c.req)
+  if (!b || typeof b !== 'object' || Array.isArray(b)) throw new HttpError(400, 'Données produit invalides.')
+  const allowed = ['store_id','name','description','price','old_price','stock','category_id','status','image']
+  if (Object.keys(b).some(key => !allowed.includes(key))) throw new HttpError(400, 'Champ non autorisé.')
+  if ('store_id' in b && b['store_id'] !== product.store_id) throw new HttpError(400, 'La boutique du produit ne peut pas changer.')
+  const columns: string[] = []; const values: (string | number | null)[] = []
+  const add = (column: string, value: string | number | null) => { columns.push(`${column}=?`); values.push(value) }
+  if ('category_id' in b) {
+    const category = str(b['category_id'], 'catégorie', 64, false)
+    if (category && (!/^[A-Za-z0-9_-]+$/.test(category) || !await c.env.DB.prepare('SELECT id FROM categories WHERE id = ?').bind(category).first())) throw new HttpError(400, 'Catégorie introuvable.')
+    add('category_id', category)
+  }
+  if ('name' in b) { const name = str(b['name'], 'nom', 120); if (!name) throw new HttpError(400, 'Nom requis.'); add('name', name) }
+  if ('description' in b) add('description', str(b['description'], 'description', 5000, false))
+  for (const field of ['price','old_price','stock'] as const) {
+    if (!(field in b)) continue
+    const value = b[field]
+    if (field === 'old_price' && value === null) { add(field, null); continue }
+    if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0) throw new HttpError(400, `Champ invalide : ${field}.`)
+    add(field, value)
+  }
+  if ('status' in b) {
+    if (b['status'] !== 'draft' && b['status'] !== 'published') throw new HttpError(400, 'Choisissez brouillon ou publication.')
+    add('status', b['status'])
+  }
+  const imageProvided = 'image' in b
+  const image = imageProvided ? str(b['image'], 'photo', 750000, false) : null
+  if (image && !/^https:\/\/[^\s]+$|^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(image)) throw new HttpError(400, 'Photo invalide.')
+  if (!columns.length && !imageProvided) throw new HttpError(400, 'Aucune modification fournie.')
+  // Column names come only from the fixed allowlist; all values remain bound parameters.
+  const statements = [c.env.DB.prepare(`UPDATE products SET ${columns.length ? columns.join(', ') + ', ' : ''}updated_at=datetime('now') WHERE id=? AND store_id=?`)
+    .bind(...values, product.id, product.store_id)]
+  if (imageProvided) {
+    statements.push(c.env.DB.prepare('DELETE FROM product_images WHERE product_id = ? AND position = 0').bind(product.id))
+    if (image) statements.push(c.env.DB.prepare('INSERT INTO product_images (id, product_id, url, position) VALUES (?,?,?,0)').bind(id(), product.id, image))
+  }
+  await c.env.DB.batch(statements)
+  return json({ id: product.id, store_id: product.store_id, status: b['status'] ?? product.status })
+})
 r('GET', '/products', async c => {
   const store = c.url.searchParams.get('store'); const cat = c.url.searchParams.get('category')
   const { results } = await c.env.DB.prepare(`SELECT p.id, p.store_id, p.category_id, p.name, p.description, p.price, p.old_price, p.stock,

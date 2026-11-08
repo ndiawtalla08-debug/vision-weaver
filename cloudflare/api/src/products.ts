@@ -61,17 +61,6 @@ export const productRoutes: [string, string, Handler][] = [
     await c.env.DB.batch(statements)
     return json({ id: pid, store_id: sid, status: f.status }, 201)
   }],
-  ['PATCH', '/products/:id', async c => {
-    const product = await productAccess(c); const b = await body(c.req)
-    if (b['store_id'] !== product.store_id) throw new HttpError(400, 'La boutique du produit ne peut pas changer.')
-    const f = await fields(c, b)
-    const statements = [c.env.DB.prepare(`UPDATE products SET category_id=?, name=?, description=?, price=?, old_price=?, stock=?, status=?, updated_at=datetime('now') WHERE id=? AND store_id=?`)
-      .bind(f.category, f.name, f.description, f.price, f.oldPrice, f.stock, f.status, product.id, product.store_id),
-      c.env.DB.prepare('DELETE FROM product_images WHERE product_id = ? AND position = 0').bind(product.id)]
-    if (f.image) statements.push(c.env.DB.prepare('INSERT INTO product_images (id, product_id, url, position) VALUES (?,?,?,0)').bind(id(), product.id, f.image))
-    await c.env.DB.batch(statements)
-    return json({ id: product.id, store_id: product.store_id, status: f.status })
-  }],
   ['DELETE', '/products/:id', async c => {
     const product = await productAccess(c)
     await c.env.DB.prepare('DELETE FROM products WHERE id = ? AND store_id = ?').bind(product.id, product.store_id).run()

@@ -66,3 +66,10 @@ Se connecter avec deux comptes ayant chacun leur propre boutique ; relever les I
 Créer un brouillon avec une photo, confirmer sa présence dans `/me/products?store=ID` et son absence dans `/products?store=ID`.
 Modifier le produit, le publier, contrôler tous les champs et la photo via la lecture publique ; tenter sa modification et sa suppression avec la session de l’autre vendeur (403 attendu), puis supprimer le produit avec la session propriétaire et confirmer son absence.
 Ne jamais utiliser ni modifier les produits existants pour ces essais : créer un produit temporaire explicitement identifié comme test.
+
+### Résultats vérifiés le 8 novembre 2026
+Sur `https://toutsuite-api.ndiawtalla08.workers.dev` : connexion et profil, création d’un produit temporaire dans une boutique de test, brouillon absent du catalogue public, refus 403 de création et suppression entre deux vendeurs, suppression propriétaire puis 404 sur le produit supprimé. Les produits de test ont été supprimés ; les comptes de test et deux boutiques en attente restent enregistrés et ne sont pas publics.
+La page boutique lit réellement `/products?store=ID` et affiche les données ; le compte connecté accède à « Mes produits » avec un avertissement honnête de mise à jour requise.
+`GET /me/stores`, `GET /me/products` et `PATCH /products/ID` ne sont pas disponibles sur la version déployée (404). Le parcours complet du nouveau formulaire, les photos et la publication ne sont donc pas encore vérifiés en production. Aucun accès de déploiement Cloudflare n’est disponible dans cet environnement.
+
+**Attention à la différence de version :** l’API déployée exige aussi `category` et `contact_email` lors de `POST /stores`, contrairement à la source locale. Comparer et fusionner la source réellement déployée avant de lancer `npm run deploy` ; ne pas remplacer aveuglément les fonctions boutiques existantes. Ne pas recréer la base ni réappliquer la migration initiale.

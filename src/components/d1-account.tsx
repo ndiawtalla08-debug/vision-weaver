@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useServerFn } from '@tanstack/react-start'
 import { Link } from '@tanstack/react-router'
-import { UserRound, LogOut, Heart } from 'lucide-react'
+import { UserRound, LogOut, Heart, Package } from 'lucide-react'
 import { loginD1, logoutD1, registerD1, readD1Profile } from '@/lib/favorites.functions'
 import { useMarket } from '@/lib/market-context'
 import { Button } from './ui/button'

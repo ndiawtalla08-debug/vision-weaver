@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import { ArrowRight, Check, ChevronDown, CircleHelp, Heart, MapPin, Package, Search, ShoppingCart, Star, Store, UserRound, X, Plus, Minus, Trash2, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -9,9 +9,7 @@ import { useD1Catalog } from '@/lib/d1-catalog'
 import { useD1Favorites } from '@/hooks/use-d1-favorites'
 import { useSavedProducts } from '@/lib/saved-products'
 
-type MarketState = { favoriteState: ReturnType<typeof useD1Favorites>; products: Product[]; shops: Shop[]; cart: CartItem[]; favorites: string[]; add: (product: Product, quantity?: number, size?: string, color?: string) => void; toggle: (id: string) => void; update: (index: number, quantity: number) => void; remove: (index: number) => void; openProduct: (product: Product) => void; notify: (text: string) => void }
-const MarketContext = createContext<MarketState | null>(null)
-export function useMarket() { const value = useContext(MarketContext); if (!value) throw new Error('Marketplace provider missing'); return value }
+import { MarketContext, useMarket } from '@/lib/market-context'
 export function Brand() { return <span className="brand"><span className="brand-main">TOUT<span className="brand-infinity">∞</span>SUITE</span><span className="brand-sub">ANNONCES</span></span> }
 export function MarketplaceProvider({ children }: { children: ReactNode }) {
   const d1 = useD1Catalog()

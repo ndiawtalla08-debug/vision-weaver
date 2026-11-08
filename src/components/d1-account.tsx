@@ -3,7 +3,7 @@ import { useServerFn } from '@tanstack/react-start'
 import { Link } from '@tanstack/react-router'
 import { UserRound, LogOut, Heart } from 'lucide-react'
 import { loginD1, logoutD1 } from '@/lib/favorites.functions'
-import { useMarket } from './marketplace'
+import { useMarket } from '@/lib/market-context'
 import { Button } from './ui/button'
 
 export function D1Account() {

@@ -19,3 +19,5 @@
 - Public D1 catalog reads use a fixed-endpoint server function and a shared cached root query, so preview CORS restrictions do not block browsing; demo fixtures are for tests only.
 - D1 account sessions use a same-origin HttpOnly cookie; favorites server functions validate the token through /me and never accept a user ID, while D1 scopes every operation to the authenticated owner.
 - D1 signup must obtain a verified session before reporting sign-in success; support older Workers by exchanging newly registered credentials through /auth/login without exposing tokens to JavaScript.
+- D1 seller products use session-verified server functions and Worker store-owner/member checks; immutable store IDs and persistence readbacks prevent cross-store writes and false success states.
+- Store pages load the public D1 products endpoint by store ID, never by store name; private drafts are read only through authenticated seller endpoints.

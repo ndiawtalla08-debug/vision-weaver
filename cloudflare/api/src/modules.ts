@@ -1,7 +1,8 @@
 import { body, HttpError, id, int, json, hashPassword, requireAdmin, requireStoreManager, requireUser, safeEqual, sha256, str, type Ctx } from './lib'
+import { productRoutes } from './products'
 
 type Handler = (c: Ctx) => Promise<Response>
-export const routes: [string, string, Handler][] = []
+export const routes: [string, string, Handler][] = [...productRoutes]
 const r = (method: string, path: string, h: Handler) => routes.push([method, path, h])
 const SESSION_DAYS = 30
 
@@ -128,21 +129,6 @@ r('GET', '/products/:id', async c => {
     c.env.DB.prepare('SELECT id, size, color, price, stock FROM product_variants WHERE product_id = ?').bind(c.params['id']).all(),
   ])
   return json({ product: p, images: images.results, variants: variants.results })
-})
-r('POST', '/products', async c => {
-  const b = await body(c.req); const storeId = str(b.store_id, 'boutique', 64)!
-  await requireStoreManager(c, storeId); const pid = id()
-  await c.env.DB.prepare('INSERT INTO products (id, store_id, category_id, name, description, price, old_price, stock, status) VALUES (?,?,?,?,?,?,?,?,?)')
-    .bind(pid, storeId, str(b.category_id, 'catégorie', 64, false), str(b.name, 'nom', 120)!, str(b.description, 'description', 5000, false),
-      int(b.price, 'prix')!, int(b.old_price, 'ancien prix', false), int(b.stock, 'stock', false) ?? 0, str(b.status, 'statut', 10, false) ?? 'draft').run()
-  return json({ id: pid }, 201)
-})
-r('DELETE', '/products/:id', async c => {
-  const p = await c.env.DB.prepare('SELECT store_id FROM products WHERE id = ?').bind(c.params['id']).first<{ store_id: string }>()
-  if (!p) throw new HttpError(404, 'Produit introuvable.')
-  await requireStoreManager(c, p.store_id)
-  await c.env.DB.prepare('DELETE FROM products WHERE id = ?').bind(c.params['id']).run()
-  return json({ ok: true })
 })
 
 // ---------- Annonces ----------

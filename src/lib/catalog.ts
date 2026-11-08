@@ -13,7 +13,7 @@ export const products = [
   { id: 'sac-bandouliere', name: 'Sac bandoulière', price: 22000, oldPrice: 0, discount: 0, image: blackBag, category: 'Mode', store: 'SO FAB CLOSET', rating: '4,6', stock: 7 },
   { id: 'smartphone', name: 'Smartphone', price: 150000, oldPrice: 0, discount: 0, image: phone, category: 'Électronique', store: 'TECH DAKAR', rating: '4,9', stock: 5 },
 ]
-export type Product = typeof products[number] & { description?: string }
+export type Product = typeof products[number] & { description?: string; storeId?: string }
 export const shops = [
   { id: 'so-fab-closet', name: 'SO FAB CLOSET', category: 'Mode · Parfums · Accessoires', image: pinkDress, subtitle: 'Votre style, votre signature.', rating: '4,8', count: 120 },
   { id: 'touba-essence', name: 'TOUBA ESSENCE', category: 'Parfums · Beauté', image: perfume, subtitle: 'L’essence de votre élégance.', rating: '4,9', count: 85 },

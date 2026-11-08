@@ -11,3 +11,7 @@
 - [ ] Paiements réels : nécessite les comptes et identifiants officiels des prestataires.
 - [x] Corriger l’inscription D1, la session et la récupération du profil ; tester sur l’API réelle.
 - [ ] Déployer la version Workers qui retourne directement le jeton à l’inscription : déploiement manuel requis ; le site fonctionne déjà via inscription puis connexion.
+- [x] Préparer le formulaire vendeur D1, les opérations protégées et la liste publique par identifiant de boutique ; 19 tests produits réussis.
+- [x] Tester sur l’API réelle : création, brouillon masqué, suppression propriétaire et refus 403 de création/suppression entre vendeurs ; vérifier la boutique et le compte connecté dans le site.
+- [ ] Déployer les endpoints produits : /me/stores, /me/products et PATCH /products/ID absents (404) ; accès Cloudflare de déploiement non disponible ici. Comparer la version déployée avant remplacement car /stores exige category/contact_email non présents dans la source locale.
+- [ ] Tester de bout en bout le formulaire vendeur, les photos, la modification et la publication après déploiement des endpoints manquants.

@@ -8,17 +8,22 @@ const SESSION_DAYS = 30
 // ---------- Authentification ----------
 r('POST', '/auth/register', async c => {
   const b = await body(c.req)
-  const email = str(b.email, 'email', 200)!.toLowerCase()
-  const password = str(b.password, 'mot de passe', 200)!
+  const emailValue = str(b['email'], 'email', 200)
+  const password = str(b['password'], 'mot de passe', 200)
+  if (!emailValue || !password) throw new HttpError(400, 'Email et mot de passe requis.')
+  const email = emailValue.toLowerCase()
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new HttpError(400, 'Email invalide.')
   if (password.length < 8) throw new HttpError(400, 'Mot de passe : 8 caractères minimum.')
   if (await c.env.DB.prepare('SELECT 1 FROM users WHERE email = ?').bind(email).first()) throw new HttpError(409, 'Email déjà utilisé.')
   const { hash, salt } = await hashPassword(password); const uid = id()
+  const token = id() + id()
+  const expires = new Date(Date.now() + SESSION_DAYS * 864e5).toISOString()
   await c.env.DB.batch([
     c.env.DB.prepare('INSERT INTO users (id, email, password_hash, password_salt) VALUES (?,?,?,?)').bind(uid, email, hash, salt),
-    c.env.DB.prepare('INSERT INTO user_profiles (user_id, full_name) VALUES (?,?)').bind(uid, str(b.full_name, 'nom', 120, false)),
+    c.env.DB.prepare('INSERT INTO user_profiles (user_id, full_name, phone, city) VALUES (?,?,?,?)').bind(uid, str(b['full_name'], 'nom', 120, false), str(b['phone'], 'téléphone', 30, false), str(b['city'], 'ville', 80, false)),
+    c.env.DB.prepare('INSERT INTO sessions (id, user_id, expires_at) VALUES (?,?,?)').bind(await sha256(token), uid, expires),
   ])
-  return json({ user: { id: uid, email, role: 'user' } }, 201)
+  return json({ token, expires_at: expires, user: { id: uid, email, role: 'user' } }, 201)
 })
 
 r('POST', '/auth/login', async c => {

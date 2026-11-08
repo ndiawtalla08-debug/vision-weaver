@@ -31,3 +31,20 @@ npx wrangler d1 execute toutsuite-annonces-db --remote --command "UPDATE users S
 ```
 
 Sécurité : mots de passe PBKDF2-SHA256 salés ; sessions par jeton aléatoire dont seule l'empreinte est stockée.
+
+## Inscription et connexion
+Le site appelle `POST /auth/register`, puis utilise le jeton retourné. Pour rester compatible
+avec le Worker déjà déployé qui ne retourne pas de jeton à l'inscription, le site appelle
+automatiquement `POST /auth/login` après création du compte. Le jeton reste dans un cookie
+HttpOnly du site ; `GET /me` vérifie la session et récupère `user_profiles`.
+
+La version source de `/auth/register` crée désormais utilisateur, profil et session dans
+un même lot D1 et retourne `{ token, expires_at, user }`. Elle n'a pas été déployée automatiquement.
+Pour mettre à jour uniquement le Worker existant depuis PowerShell :
+```powershell
+cd cloudflare\api
+npm install
+npx wrangler login
+npm run deploy
+```
+Aucune nouvelle base ni migration n'est nécessaire pour cette correction.

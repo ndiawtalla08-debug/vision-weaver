@@ -1,6 +1,8 @@
-// Client de l'API Cloudflare Workers (D1). Non branché aux pages tant que la connexion n'est pas testée.
+// Client direct conservé pour les futurs appels authentifiés ; les lectures publiques
+// passent par d1.functions.ts afin de fonctionner aussi dans la prévisualisation.
 // L'adresse vient de VITE_TOUTSUITE_API_URL ; aucune clé secrète n'est utilisée ici.
-export const apiUrl = (import.meta.env['VITE_TOUTSUITE_API_URL'] as string | undefined)?.replace(/\/$/, '') ?? ''
+import { d1BaseUrl } from './d1-schema'
+export const apiUrl = (import.meta.env['VITE_TOUTSUITE_API_URL'] as string | undefined)?.replace(/\/$/, '') ?? d1BaseUrl
 
 export async function api<T>(path: string, init: RequestInit & { token?: string } = {}): Promise<T> {
   if (!apiUrl) throw new Error('API Cloudflare non configurée.')

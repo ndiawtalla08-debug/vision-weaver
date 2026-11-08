@@ -33,9 +33,17 @@ async function fields(c: Ctx, b: Record<string, unknown>) {
   if (image && !/^https:\/\/[^\s]+$|^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(image)) throw new HttpError(400, 'Photo invalide.')
   return { category, name, description: str(b['description'], 'description', 5000, false), price: int(b['price'], 'prix'), oldPrice: int(b['old_price'], 'ancien prix', false), stock: int(b['stock'], 'stock', false) ?? 0, status, image }
 }
-const selection = `SELECT p.id, p.store_id, p.category_id, p.name, p.description, p.price, p.old_price, p.stock, p.status,
+const selection = `SELECT p.id, p.store_id, p.category_id, p.name, p.description, p.price, p.old_price, p.stock, p.status, p.created_at,
  (SELECT url FROM product_images i WHERE i.product_id = p.id ORDER BY position LIMIT 1) AS image FROM products p`
 export const productRoutes: [string, string, Handler][] = [
+  ['GET', '/my/products', async c => {
+    const u = requireUser(c)
+    const { results } = await c.env.DB.prepare(`${selection.replace(' FROM products p', ', s.name AS store_name FROM products p')}
+      JOIN stores s ON s.id = p.store_id
+      WHERE s.owner_id = ?1 OR EXISTS (SELECT 1 FROM store_members m WHERE m.store_id = s.id AND m.user_id = ?1 AND m.role IN ('owner','manager'))
+      ORDER BY p.created_at DESC`).bind(u.id).all()
+    return json({ products: results })
+  }],
   ['GET', '/me/stores', async c => {
     const u = requireUser(c)
     const { results } = await c.env.DB.prepare(`SELECT DISTINCT s.id, s.slug, s.name, s.description, s.status FROM stores s

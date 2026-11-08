@@ -23,29 +23,41 @@ export const readSellerProducts = createServerFn({ method: 'GET' }).inputValidat
     return { products, error: null }
   } catch (e) { return { products: [], error: message(e) } }
 })
+async function myProducts(token: string) {
+  return z.object({ products: z.array(sellerProductSchema) }).parse(await d1Request('/my/products', token)).products
+}
+export const readMyProducts = createServerFn({ method: 'GET' }).handler(async (): Promise<{ products: SellerProduct[]; error: string | null }> => {
+  try { const { token } = await requireD1Session(); return { products: await myProducts(token), error: null } }
+  catch (e) { return { products: [], error: message(e) } }
+})
 export const saveSellerProduct = createServerFn({ method: 'POST' }).inputValidator(input => z.object({ id: d1Identifier.optional(), product: productInput }).strict().parse(input)).handler(async ({ data }) => {
   try {
-    const { token } = await requireD1Session(); await ownedStore(token, data.product.store_id)
+    const { token } = await requireD1Session()
     if (data.id) {
-      const { products } = z.object({ products: z.array(sellerProductSchema) }).parse(await d1Request(`/me/products?store=${encodeURIComponent(data.product.store_id)}`, token))
+      const products = await myProducts(token)
       if (!products.some(p => p.id === data.id && p.store_id === data.product.store_id)) throw new D1AccessError(403, 'Ce produit n’appartient pas à votre boutique.')
-    }
-    const result = z.object({ id: d1Identifier, store_id: d1Identifier, status: z.enum(['draft','published']) }).parse(await d1Request(data.id ? `/products/${encodeURIComponent(data.id)}` : '/products', token, data.id ? 'PATCH' : 'POST', data.product))
-    if (result.store_id !== data.product.store_id || data.id && result.id !== data.id) throw new Error('Product identity mismatch')
-    const readback = z.object({ products: z.array(sellerProductSchema) }).parse(await d1Request(`/me/products?store=${encodeURIComponent(result.store_id)}`, token))
-    if (!readback.products.some(p => p.id === result.id && p.store_id === result.store_id && p.status === result.status)) throw new Error('Product not persisted')
-    return { id: result.id, error: null }
+    } else await ownedStore(token, data.product.store_id)
+    // Existing R2 images are preserved by omitting image on editing; image upload remains on creation.
+    const { image: _image, ...changes } = data.product
+    const raw = await d1Request(data.id ? `/products/${encodeURIComponent(data.id)}` : '/products', token, data.id ? 'PATCH' : 'POST', data.id ? changes : data.product)
+    const result = z.object({ id: d1Identifier.optional(), store_id: d1Identifier.optional(), status: z.enum(['draft','published']).optional() }).parse(raw)
+    const resultId = result.id ?? data.id
+    if (!resultId) throw new Error('Missing product identity')
+    if (result.store_id && result.store_id !== data.product.store_id || data.id && resultId !== data.id) throw new Error('Product identity mismatch')
+    const readback = await myProducts(token)
+    const persisted = readback.find(p => p.id === resultId && p.store_id === data.product.store_id)
+    if (!persisted || persisted.status !== data.product.status || persisted.name !== data.product.name || (persisted.description ?? '') !== data.product.description || persisted.price !== data.product.price || persisted.stock !== data.product.stock || (persisted.old_price ?? null) !== data.product.old_price || (persisted.category_id ?? null) !== data.product.category_id) throw new Error('Product not persisted')
+    return { id: resultId, error: null }
   } catch (e) { return { id: null, error: message(e) } }
 })
 export const deleteSellerProduct = createServerFn({ method: 'POST' }).inputValidator(input => z.object({ id: d1Identifier, store_id: d1Identifier }).strict().parse(input)).handler(async ({ data }) => {
   try {
-    const { token } = await requireD1Session(); await ownedStore(token, data.store_id)
-    const path = `/me/products?store=${encodeURIComponent(data.store_id)}` as const
-    const { products } = z.object({ products: z.array(sellerProductSchema) }).parse(await d1Request(path, token))
+    const { token } = await requireD1Session()
+    const products = await myProducts(token)
     if (!products.some(p => p.id === data.id && p.store_id === data.store_id)) throw new D1AccessError(403, 'Ce produit n’appartient pas à votre boutique.')
     await d1Request(`/products/${encodeURIComponent(data.id)}`, token, 'DELETE')
-    const readback = z.object({ products: z.array(sellerProductSchema) }).parse(await d1Request(path, token))
-    if (readback.products.some(p => p.id === data.id)) throw new Error('Product still exists')
+    const readback = await myProducts(token)
+    if (readback.some(p => p.id === data.id)) throw new Error('Product still exists')
     return { error: null }
   } catch (e) { return { error: message(e) } }
 })

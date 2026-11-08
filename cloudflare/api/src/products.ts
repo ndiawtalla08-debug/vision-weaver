@@ -38,7 +38,7 @@ const selection = `SELECT p.id, p.store_id, p.category_id, p.name, p.description
 export const productRoutes: [string, string, Handler][] = [
   ['GET', '/my/products', async c => {
     const u = requireUser(c)
-    const { results } = await c.env.DB.prepare(`${selection}, s.name AS store_name
+    const { results } = await c.env.DB.prepare(`${selection.replace(' FROM products p', ', s.name AS store_name FROM products p')}
       JOIN stores s ON s.id = p.store_id
       WHERE s.owner_id = ?1 OR EXISTS (SELECT 1 FROM store_members m WHERE m.store_id = s.id AND m.user_id = ?1 AND m.role IN ('owner','manager'))
       ORDER BY p.created_at DESC`).bind(u.id).all()

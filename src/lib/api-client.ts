@@ -14,7 +14,7 @@ export const productImageUrl = (image?: string | null, key?: string | null) => {
   return `${d1BaseUrl}/images?key=${encodeURIComponent(image)}`
 }
 
-export async function api<T>(path: string, init: RequestInit & { token?: string } = {}, baseUrl = apiUrl): Promise<T> {
+export async function api<T>(path: string, init: RequestInit & { token?: string | undefined } = {}, baseUrl = apiUrl): Promise<T> {
   if (!baseUrl) throw new Error('API Cloudflare non configurée.')
   const headers = new Headers(init.headers)
   headers.set('content-type', 'application/json')

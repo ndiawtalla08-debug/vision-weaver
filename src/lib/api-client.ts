@@ -11,6 +11,7 @@ export const productImageUrl = (image?: string | null, key?: string | null) => {
   if (key) return `${d1BaseUrl}/images?key=${encodeURIComponent(key)}`
   if (!image) return ''
   if (/^https:\/\/|^data:image\//.test(image)) return image
+  if (image.startsWith('/images?')) return `${d1BaseUrl}${image}`
   return `${d1BaseUrl}/images?key=${encodeURIComponent(image)}`
 }
 

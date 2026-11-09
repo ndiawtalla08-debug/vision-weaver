@@ -15,4 +15,4 @@
 - [x] Préparer le formulaire vendeur D1, les opérations protégées et la liste publique par identifiant de boutique ; 19 tests produits réussis.
 - [x] Tester sur l’API réelle : création, brouillon masqué, suppression propriétaire et refus 403 de création/suppression entre vendeurs ; vérifier la boutique et le compte connecté dans le site.
 - [ ] Déployer les endpoints produits : /me/stores, /me/products et PATCH /products/ID absents (404) ; accès Cloudflare de déploiement non disponible ici. Comparer la version déployée avant remplacement car /stores exige category/contact_email non présents dans la source locale.
-- [ ] Tester de bout en bout le formulaire vendeur, les photos, la modification et la publication après déploiement des endpoints manquants.
+- [ ] Tester de bout en bout le formulaire vendeur, les photos, la modification et la publication après déploiement des endpoints manquants.- [x] Test réel « Mes produits » (9 nov. 2026) : inscription, session protégée, chargement de la page sans erreur ; message clair affiché car l'API déployée est une ancienne version.

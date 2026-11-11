@@ -73,3 +73,12 @@ La page boutique lit réellement `/products?store=ID` et affiche les données ; 
 `GET /me/stores`, `GET /me/products` et `PATCH /products/ID` ne sont pas disponibles sur la version déployée (404). Le parcours complet du nouveau formulaire, les photos et la publication ne sont donc pas encore vérifiés en production. Aucun accès de déploiement Cloudflare n’est disponible dans cet environnement.
 
 **Attention à la différence de version :** l’API déployée exige aussi `category` et `contact_email` lors de `POST /stores`, contrairement à la source locale. Comparer et fusionner la source réellement déployée avant de lancer `npm run deploy` ; ne pas remplacer aveuglément les fonctions boutiques existantes. Ne pas recréer la base ni réappliquer la migration initiale.
+
+## Contacts publics des annonces
+La migration additive `0002_announcement_contacts.sql` ajoute `contact_phone` et `contact_email` aux annonces. Aucun profil privé n’est copié : les anciennes annonces restent sans contact tant que leur propriétaire ne l’a pas renseigné explicitement.
+Fusionner ces changements dans le Worker réellement déployé (notamment conserver sa gestion R2 et son tableau `images`), appliquer `npm run migrate:remote`, puis `npm run deploy`. Ne pas remplacer aveuglément la version en ligne par cette source partielle.
+- `POST /announcements` accepte désormais les deux coordonnées publiques optionnelles.
+- `PATCH /announcements/ID/contact` accepte uniquement `contact_phone` et/ou `contact_email` ; session obligatoire, identifiant validé, propriétaire vérifié dans D1 ; `null` retire une coordonnée, un champ omis reste inchangé.
+- `GET /announcements` inclut les contacts publics seulement pour les annonces publiées, sans joindre `users` ni `user_profiles`.
+Le site active automatiquement le bouton téléphone ou email lorsqu’un contact public valide est reçu. Vérifier après déploiement avec une annonce de test et deux comptes : propriétaire autorisé, autre vendeur refusé (403), anonyme refusé (401), coordonnées présentes à la lecture publique seulement après publication.
+Cette mise à jour n’a pas été déployée depuis cet environnement, qui n’a pas d’accès Cloudflare.

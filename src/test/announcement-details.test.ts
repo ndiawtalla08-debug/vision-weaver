@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { announcementContact, announcementDate } from '@/lib/announcement-details'
+import { announcementContact, announcementDate, similarAnnouncements } from '@/lib/announcement-details'
 describe('announcement details', () => {
   it('does not invent a contact when D1 provides none', () => {
     expect(announcementContact({})).toBeNull()
@@ -13,5 +13,10 @@ describe('announcement details', () => {
   it('formats D1 timestamps consistently in Senegal', () => {
     expect(announcementDate('2026-11-05 19:59:22')).toBe('5 novembre 2026')
     expect(announcementDate('invalid')).toBe('Non renseignée')
+  })
+  it('excludes the current offer and ranks category before location', () => {
+    const current = {id:'current', title:'Voiture', category_id:'cars',city:'Dakar'}
+    const result = similarAnnouncements(current, [current, {id:'other', title:'Autre',city:'Thiès'}, {id:'city',title:'Dakar',city:'dakar'}, {id:'category',title:'Auto',category_id:'cars'}])
+    expect(result.map(a => a.id)).toEqual(['category','city','other'])
   })
 })

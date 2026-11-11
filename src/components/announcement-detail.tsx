@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { AnnouncementPhoto } from './announcements'
 import { useD1Catalog } from '@/lib/d1-catalog'
 import { useMarket } from '@/lib/market-context'
-import { announcementContact, announcementDate } from '@/lib/announcement-details'
+import { announcementContact, announcementDate, similarAnnouncements } from '@/lib/announcement-details'
 import { formatMoney } from '@/lib/catalog'
 
 export function AnnouncementDetail({ id }: { id: string }) {
@@ -17,6 +17,7 @@ export function AnnouncementDetail({ id }: { id: string }) {
   const photos = [...new Set([a.image, ...a.images].filter(Boolean))]
   const contact = announcementContact(a)
   const favorite = favoriteState.items.some(f => f.announcement_id === a.id)
+  const similar = similarAnnouncements(a, announcements)
   const details = [
     ['Catégorie', categories.find(c => c.id === a.category_id)?.name || 'Non renseignée'],
     ['Localisation', a.city || 'Non renseignée'],
@@ -45,5 +46,11 @@ export function AnnouncementDetail({ id }: { id: string }) {
       </section>
     </div>
     <section className="mt-9 border-t border-border pt-6"><h2 className="mb-4 text-2xl">Description</h2><p className="max-w-3xl whitespace-pre-wrap break-words leading-relaxed">{a.description || 'Aucune description renseignée.'}</p></section>
+    <section className="mt-9 border-t border-border pt-6" aria-label="Annonces similaires"><h2 className="mb-5 text-2xl">Annonces similaires</h2>
+      {similar.length ? <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{similar.map(item => <article key={item.id} className="product-card flex min-w-0 flex-col">
+        <Link to="/annonce/$id" params={{id: item.id}} aria-label={`Voir ${item.title}`}><AnnouncementPhoto src={item.image || item.images[0] || ''} title={item.title}/></Link>
+        <div className="flex flex-1 flex-col gap-3 p-4"><h3 className="break-words text-xl">{item.title}</h3>{item.city && <p className="flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="size-4"/>{item.city}</p>}<p className="price">{item.price == null ? 'Prix sur demande' : formatMoney(item.price)}</p><Button variant="outline" className="mt-auto" asChild><Link to="/annonce/$id" params={{id:item.id}}>Voir l’annonce</Link></Button></div>
+      </article>)}</div> : <p className="text-sm text-muted-foreground">Aucune autre annonce disponible pour le moment.</p>}
+    </section>
   </main>
 }

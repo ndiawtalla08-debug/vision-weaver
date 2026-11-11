@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { Heart, ImageOff, MapPin, RefreshCw, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
@@ -6,7 +7,7 @@ import { useD1Catalog } from '@/lib/d1-catalog'
 import { useMarket } from '@/lib/market-context'
 import { formatMoney } from '@/lib/catalog'
 
-function AnnouncementPhoto({ src, title, className = '' }: { src: string; title: string; className?: string }) {
+export function AnnouncementPhoto({ src, title, className = '' }: { src: string; title: string; className?: string }) {
   const [failed, setFailed] = useState(false)
   return <div className={`aspect-[4/3] overflow-hidden bg-secondary ${className}`}>
     {src && !failed ? <img src={src} alt={title} loading="lazy" className="h-full w-full object-contain" onError={() => setFailed(true)}/> : <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground"><ImageOff className="size-8"/><span className="text-sm">Photo indisponible</span></div>}
@@ -41,7 +42,8 @@ export function AnnouncementsPage() {
           {a.city && <p className="flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="size-4 shrink-0"/>{a.city}</p>}
           <p className="price">{a.price == null ? 'Prix sur demande' : formatMoney(a.price)}</p>
           <p className="line-clamp-2 break-words text-sm text-muted-foreground">{a.description}</p>
-          <Button variant="outline" className="mt-auto w-full" onClick={() => { setSelectedId(a.id); setPhotoIndex(0) }}>Voir l’annonce</Button>
+          <Button variant="outline" className="mt-auto w-full" asChild><Link to="/annonce/$id" params={{id: a.id}}>Voir l’annonce</Link></Button>
+          <Button variant="ghost" size="sm" onClick={() => { setSelectedId(a.id); setPhotoIndex(0) }}>Aperçu rapide</Button>
         </div>
       </article>
     })}</div>

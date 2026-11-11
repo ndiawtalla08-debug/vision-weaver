@@ -27,6 +27,7 @@ import { Route as PanierRouteImport } from './routes/panier'
 import { Route as PromotionsRouteImport } from './routes/promotions'
 import { Route as SuiviRouteImport } from './routes/suivi'
 import { Route as ToutColisRouteImport } from './routes/tout-colis'
+import { Route as AnnonceIdRouteImport } from './routes/annonce.$id'
 import { Route as BoutiqueIdRouteImport } from './routes/boutique.$id'
 import { Route as ProduitIdRouteImport } from './routes/produit.$id'
 
@@ -120,6 +121,11 @@ const ToutColisRoute = ToutColisRouteImport.update({
   path: '/tout-colis',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnnonceIdRoute = AnnonceIdRouteImport.update({
+  id: '/annonce/$id',
+  path: '/annonce/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BoutiqueIdRoute = BoutiqueIdRouteImport.update({
   id: '/boutique/$id',
   path: '/boutique/$id',
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/promotions': typeof PromotionsRoute
   '/suivi': typeof SuiviRoute
   '/tout-colis': typeof ToutColisRoute
+  '/annonce/$id': typeof AnnonceIdRoute
   '/boutique/$id': typeof BoutiqueIdRoute
   '/produit/$id': typeof ProduitIdRoute
 }
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/promotions': typeof PromotionsRoute
   '/suivi': typeof SuiviRoute
   '/tout-colis': typeof ToutColisRoute
+  '/annonce/$id': typeof AnnonceIdRoute
   '/boutique/$id': typeof BoutiqueIdRoute
   '/produit/$id': typeof ProduitIdRoute
 }
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/promotions': typeof PromotionsRoute
   '/suivi': typeof SuiviRoute
   '/tout-colis': typeof ToutColisRoute
+  '/annonce/$id': typeof AnnonceIdRoute
   '/boutique/$id': typeof BoutiqueIdRoute
   '/produit/$id': typeof ProduitIdRoute
 }
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/promotions'
     | '/suivi'
     | '/tout-colis'
+    | '/annonce/$id'
     | '/boutique/$id'
     | '/produit/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/promotions'
     | '/suivi'
     | '/tout-colis'
+    | '/annonce/$id'
     | '/boutique/$id'
     | '/produit/$id'
   id:
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/promotions'
     | '/suivi'
     | '/tout-colis'
+    | '/annonce/$id'
     | '/boutique/$id'
     | '/produit/$id'
   fileRoutesById: FileRoutesById
@@ -286,6 +298,7 @@ export interface RootRouteChildren {
   PromotionsRoute: typeof PromotionsRoute
   SuiviRoute: typeof SuiviRoute
   ToutColisRoute: typeof ToutColisRoute
+  AnnonceIdRoute: typeof AnnonceIdRoute
   BoutiqueIdRoute: typeof BoutiqueIdRoute
   ProduitIdRoute: typeof ProduitIdRoute
 }
@@ -418,6 +431,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToutColisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/annonce/$id': {
+      id: '/annonce/$id'
+      path: '/annonce/$id'
+      fullPath: '/annonce/$id'
+      preLoaderRoute: typeof AnnonceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/boutique/$id': {
       id: '/boutique/$id'
       path: '/boutique/$id'
@@ -454,6 +474,7 @@ const rootRouteChildren: RootRouteChildren = {
   PromotionsRoute: PromotionsRoute,
   SuiviRoute: SuiviRoute,
   ToutColisRoute: ToutColisRoute,
+  AnnonceIdRoute: AnnonceIdRoute,
   BoutiqueIdRoute: BoutiqueIdRoute,
   ProduitIdRoute: ProduitIdRoute,
 }

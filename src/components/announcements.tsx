@@ -26,7 +26,7 @@ export function AnnouncementsPage() {
   return <main className="container-site page-main">
     <div className="flex flex-wrap items-center justify-between gap-3"><h1>Annonces</h1><Button variant="outline" size="sm" disabled={refreshing} onClick={() => void retry()}><RefreshCw className={refreshing ? 'animate-spin' : ''}/>Actualiser</Button></div>
     <div className="my-7 grid gap-3 md:grid-cols-[minmax(0,1fr)_280px]">
-      <label className="relative"><Search className="pointer-events-none absolute left-3 top-3 size-4 text-muted-foreground"/><input className="form-input pl-10" aria-label="Rechercher une annonce" placeholder="Rechercher une annonce…" value={q} onChange={e => setQ(e.target.value)}/></label>
+      <label className="relative"><Search className="pointer-events-none absolute left-3 top-3 size-4 text-muted-foreground"/><input className="form-input pl-10!" aria-label="Rechercher une annonce" placeholder="Rechercher une annonce…" value={q} onChange={e => setQ(e.target.value)}/></label>
       <select className="form-input" aria-label="Catégorie des annonces" value={category} onChange={e => setCategory(e.target.value)}><option value="">Toutes les catégories</option>{categories.map(c => <option value={c.id} key={c.id}>{c.name}</option>)}</select>
     </div>
     {error ? <div role="alert" className="notice mb-6">{error}</div> : <p role="status" className="mb-5 text-sm text-muted-foreground">{filtered.length} annonce{filtered.length !== 1 ? 's' : ''}</p>}

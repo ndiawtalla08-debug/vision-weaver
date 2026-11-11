@@ -23,3 +23,4 @@
 - Store pages load the public D1 products endpoint by store ID, never by store name; private drafts are read only through authenticated seller endpoints.
 - Announcement browsing lives in a focused UI module; resolve relative R2 image paths against the fixed D1 API origin through the shared image helper so stored photos never resolve against the website.
 - Announcement detail routes use the published D1 catalog until a public detail endpoint exists; contact links use only explicitly public contact fields and never expose private user profiles.
+- Store public announcement contacts separately from account profiles with owner-checked writes; similar offers rank published catalog entries by category then location, excluding the current announcement.

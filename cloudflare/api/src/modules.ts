@@ -1,5 +1,6 @@
 import { body, HttpError, id, int, json, hashPassword, requireAdmin, requireStoreManager, requireUser, safeEqual, sha256, str, type Ctx } from './lib'
 import { productRoutes } from './products'
+import { publicContacts } from './announcement-contacts'
 
 type Handler = (c: Ctx) => Promise<Response>
 export const routes: [string, string, Handler][] = [...productRoutes]
@@ -183,17 +184,34 @@ r('GET', '/products/:id', async c => {
 
 // ---------- Annonces ----------
 r('GET', '/announcements', async c => {
-  const { results } = await c.env.DB.prepare(`SELECT a.id, a.title, a.description, a.price, a.city, a.category_id, a.created_at,
+  const { results } = await c.env.DB.prepare(`SELECT a.id, a.title, a.description, a.price, a.city, a.category_id, a.created_at, a.contact_phone, a.contact_email,
       (SELECT url FROM announcement_images i WHERE i.announcement_id = a.id ORDER BY position LIMIT 1) AS image
     FROM announcements a WHERE a.status = 'published' ORDER BY a.created_at DESC LIMIT 100`).all()
   return json({ announcements: results })
 })
 r('POST', '/announcements', async c => {
   const u = requireUser(c); const b = await body(c.req); const aid = id()
-  await c.env.DB.prepare('INSERT INTO announcements (id, user_id, category_id, title, description, price, city) VALUES (?,?,?,?,?,?,?)')
-    .bind(aid, u.id, str(b.category_id, 'catégorie', 64, false), str(b.title, 'titre', 120)!, str(b.description, 'description', 5000, false),
-      int(b.price, 'prix', false), str(b.city, 'ville', 80, false)).run()
+  const contacts = publicContacts(b)
+  const title = str(b.title, 'titre', 120)
+  if (!title) throw new HttpError(400, 'Titre requis.')
+  await c.env.DB.prepare('INSERT INTO announcements (id, user_id, category_id, title, description, price, city, contact_phone, contact_email) VALUES (?,?,?,?,?,?,?,?,?)')
+    .bind(aid, u.id, str(b.category_id, 'catégorie', 64, false), title, str(b.description, 'description', 5000, false),
+      int(b.price, 'prix', false), str(b.city, 'ville', 80, false), contacts.contact_phone, contacts.contact_email).run()
   return json({ id: aid, status: 'pending' }, 201)
+})
+r('PATCH', '/announcements/:id/contact', async c => {
+  const u = requireUser(c)
+  const announcementId = str(c.params['id'], 'identifiant annonce', 64)
+  if (!announcementId || !/^[A-Za-z0-9_-]+$/.test(announcementId)) throw new HttpError(400, 'Identifiant annonce invalide.')
+  const a = await c.env.DB.prepare('SELECT id, user_id FROM announcements WHERE id = ?').bind(announcementId).first<{ id: string; user_id: string }>()
+  if (!a) throw new HttpError(404, 'Annonce introuvable.')
+  if (a.user_id !== u.id) throw new HttpError(403, 'Cette annonce ne vous appartient pas.')
+  const b = await body(c.req)
+  if (!b || typeof b !== 'object' || Array.isArray(b) || !Object.keys(b).length || Object.keys(b).some(k => !['contact_phone', 'contact_email'].includes(k))) throw new HttpError(400, 'Champs de contact invalides.')
+  const contacts = publicContacts(b)
+  await c.env.DB.prepare(`UPDATE announcements SET contact_phone = CASE WHEN ? THEN ? ELSE contact_phone END, contact_email = CASE WHEN ? THEN ? ELSE contact_email END, updated_at=datetime('now') WHERE id = ? AND user_id = ?`)
+    .bind('contact_phone' in b ? 1 : 0, contacts.contact_phone, 'contact_email' in b ? 1 : 0, contacts.contact_email, a.id, u.id).run()
+  return json({ ok: true })
 })
 r('PATCH', '/admin/announcements/:id', async c => {
   requireAdmin(c); const b = await body(c.req)

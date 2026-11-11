@@ -1,5 +1,6 @@
 # TOUT∞SUITE ANNONCES
-- [ ] Ajouter les pages individuelles des annonces, galerie, caractéristiques et contact public disponible ; vérifier les liens directs et le mobile.
+- [x] Ajouter les pages individuelles des annonces, galerie et caractéristiques ; liens directs, mobile et 9 tests vérifiés ; bouton contact disponible uniquement si coordonnées publiques fournies.
+- [ ] Activer le contact vendeur réel des annonces : l’API publique ne fournit actuellement aucune coordonnée de contact.
 - [x] Corriger l’affichage des annonces D1 : photos R2, liste lisible, détails, recherche ; 6 tests réussis et vérification réelle sur ordinateur et mobile.
 - [ ] Finaliser Mes produits : lecture /my/products, images R2, compteurs, actualisation et opérations protégées ; vérifier l’API réelle sans exposer les jetons.
 - [x] Reproduire l’accueil et les sections de la maquette.

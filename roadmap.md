@@ -1,4 +1,6 @@
 # TOUT∞SUITE ANNONCES
+- [ ] Préparer les contacts publics des annonces dans D1 et l’API avec contrôle propriétaire ; tester validation et confidentialité.
+- [ ] Ajouter et vérifier les annonces similaires sur les pages détail.
 - [x] Ajouter les pages individuelles des annonces, galerie et caractéristiques ; liens directs, mobile et 9 tests vérifiés ; bouton contact disponible uniquement si coordonnées publiques fournies.
 - [ ] Activer le contact vendeur réel des annonces : l’API publique ne fournit actuellement aucune coordonnée de contact.
 - [x] Corriger l’affichage des annonces D1 : photos R2, liste lisible, détails, recherche ; 6 tests réussis et vérification réelle sur ordinateur et mobile.

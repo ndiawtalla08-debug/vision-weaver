@@ -1,8 +1,8 @@
 # TOUT∞SUITE ANNONCES
-- [ ] Préparer les contacts publics des annonces dans D1 et l’API avec contrôle propriétaire ; tester validation et confidentialité.
-- [ ] Ajouter et vérifier les annonces similaires sur les pages détail.
+- [x] Préparer les contacts publics des annonces dans D1 et l’API avec contrôle propriétaire ; tests de validation et confidentialité réussis.
+- [x] Ajouter et vérifier les annonces similaires sur les pages détail ; navigation réelle et mobile validés.
 - [x] Ajouter les pages individuelles des annonces, galerie et caractéristiques ; liens directs, mobile et 9 tests vérifiés ; bouton contact disponible uniquement si coordonnées publiques fournies.
-- [ ] Activer le contact vendeur réel des annonces : l’API publique ne fournit actuellement aucune coordonnée de contact.
+- [ ] Activer le contact vendeur réel des annonces : fusionner et déployer la migration 0002 et les changements Workers ; accès Cloudflare indisponible ici, coordonnées publiques à renseigner par les propriétaires.
 - [x] Corriger l’affichage des annonces D1 : photos R2, liste lisible, détails, recherche ; 6 tests réussis et vérification réelle sur ordinateur et mobile.
 - [ ] Finaliser Mes produits : lecture /my/products, images R2, compteurs, actualisation et opérations protégées ; vérifier l’API réelle sans exposer les jetons.
 - [x] Reproduire l’accueil et les sections de la maquette.

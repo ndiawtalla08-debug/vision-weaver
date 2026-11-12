@@ -15,7 +15,7 @@ export function announcementDate(value?: string | null) {
   return Number.isNaN(date.getTime()) ? 'Non renseignée' : new Intl.DateTimeFormat('fr-FR', { dateStyle: 'long', timeZone: 'Africa/Dakar' }).format(date)
 }
 
-export function similarAnnouncements<T extends { id: string; category_id?: string | null; city?: string | null; title: string }>(current: T, catalog: T[]) {
+export function similarAnnouncements<T extends { id: string; category_id?: string | null | undefined; city?: string | null | undefined; title: string }>(current: T, catalog: T[]) {
   const normalized = (s?: string | null) => (s ?? '').trim().toLocaleLowerCase('fr')
   const score = (a: T) => (current.category_id && a.category_id === current.category_id ? 4 : 0) + (normalized(current.city) && normalized(a.city) === normalized(current.city) ? 2 : 0)
   return catalog.filter(a => a.id !== current.id).sort((a, b) => score(b) - score(a)).slice(0, 4)

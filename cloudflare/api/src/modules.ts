@@ -1,5 +1,6 @@
 import { body, HttpError, id, int, json, hashPassword, requireAdmin, requireStoreManager, requireUser, safeEqual, sha256, str, type Ctx } from './lib'
 import { productRoutes } from './products'
+import { sendAnnouncementMessage, readAnnouncementMessages } from './announcement-messages'
 import { publicContacts } from './announcement-contacts'
 
 type Handler = (c: Ctx) => Promise<Response>
@@ -183,6 +184,8 @@ r('GET', '/products/:id', async c => {
 })
 
 // ---------- Annonces ----------
+r('POST', '/announcements/:id/messages', sendAnnouncementMessage)
+r('GET', '/me/announcement-messages', readAnnouncementMessages)
 r('GET', '/announcements', async c => {
   const { results } = await c.env.DB.prepare(`SELECT a.id, a.title, a.description, a.price, a.city, a.category_id, a.created_at, a.contact_phone, a.contact_email,
       (SELECT url FROM announcement_images i WHERE i.announcement_id = a.id ORDER BY position LIMIT 1) AS image

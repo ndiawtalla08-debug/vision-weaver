@@ -24,3 +24,4 @@
 - Announcement browsing lives in a focused UI module; resolve relative R2 image paths against the fixed D1 API origin through the shared image helper so stored photos never resolve against the website.
 - Announcement detail routes use the published D1 catalog until a public detail endpoint exists; contact links use only explicitly public contact fields and never expose private user profiles.
 - Store public announcement contacts separately from account profiles with owner-checked writes; similar offers rank published catalog entries by category then location, excluding the current announcement.
+- Announcement contact forms persist to D1 with recipients derived from published announcements, atomic rate limits and session-scoped seller inbox reads; never report delivery before a successful insert or send unconfigured email notifications.

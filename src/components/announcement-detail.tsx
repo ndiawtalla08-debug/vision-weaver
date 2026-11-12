@@ -7,6 +7,7 @@ import { useD1Catalog } from '@/lib/d1-catalog'
 import { useMarket } from '@/lib/market-context'
 import { announcementContact, announcementDate, similarAnnouncements } from '@/lib/announcement-details'
 import { formatMoney } from '@/lib/catalog'
+import { AnnouncementContactForm } from './announcement-contact-form'
 
 export function AnnouncementDetail({ id }: { id: string }) {
   const { announcements, categories } = useD1Catalog()
@@ -40,7 +41,8 @@ export function AnnouncementDetail({ id }: { id: string }) {
       </section>
       <section className="min-w-0 border-t border-border pt-5 lg:border-t-0 lg:pt-0">
         <p className="mb-6 text-3xl font-bold text-destructive">{a.price == null ? 'Prix sur demande' : formatMoney(a.price)}</p>
-        {contact ? <Button className="w-full" asChild><a href={contact.href}><Phone/>{contact.label}</a></Button> : <><Button className="w-full" disabled><Phone/>Contacter le vendeur</Button><p className="mt-2 text-sm text-muted-foreground">Le vendeur n’a pas renseigné de coordonnées publiques.</p></>}
+        <AnnouncementContactForm id={a.id} title={a.title}/>
+        {contact && <Button variant="outline" className="mt-3 w-full" asChild><a href={contact.href}><Phone/>{contact.label}</a></Button>}
         <Button variant="outline" className="mb-7 mt-3 w-full" aria-pressed={favorite} disabled={favoriteState.busy || favoriteState.loading} onClick={() => void favoriteState.toggle(a.id, 'announcement')}><Heart className={favorite ? 'fill-destructive text-destructive' : ''}/>{favorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}</Button>
         <h2 className="mb-4 text-2xl">Caractéristiques</h2><dl>{details.map(([label, value]) => <div key={label} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] gap-4 border-b border-border py-3 text-sm"><dt className="break-words text-muted-foreground">{label}</dt><dd className="break-words text-right">{value}</dd></div>)}</dl>
       </section>

@@ -7,7 +7,7 @@ import { api, ApiError } from './api-client'
 const cookieName = 'toutsuite-d1-session'
 export const userSchema = z.object({ id: z.string(), email: z.string() })
 export class D1AccessError extends Error { constructor(public status: number, message: string) { super(message) } }
-type D1Path = '/me' | '/favorites' | '/auth/register' | '/auth/login' | '/auth/logout' | '/my/products' | '/me/stores' | '/products' | `/me/products?store=${string}` | `/products/${string}`
+type D1Path = '/me/announcement-messages' | `/announcements/${string}/messages` | '/me' | '/favorites' | '/auth/register' | '/auth/login' | '/auth/logout' | '/my/products' | '/me/stores' | '/products' | `/me/products?store=${string}` | `/products/${string}`
 export async function d1Request(path: D1Path, token?: string, method = 'GET', body?: unknown) {
   setResponseHeader('cache-control', 'private, no-store')
   try { return await api<unknown>(path, {

@@ -82,3 +82,8 @@ Fusionner ces changements dans le Worker réellement déployé (notamment conser
 - `GET /announcements` inclut les contacts publics seulement pour les annonces publiées, sans joindre `users` ni `user_profiles`.
 Le site active automatiquement le bouton téléphone ou email lorsqu’un contact public valide est reçu. Vérifier après déploiement avec une annonce de test et deux comptes : propriétaire autorisé, autre vendeur refusé (403), anonyme refusé (401), coordonnées présentes à la lecture publique seulement après publication.
 Cette mise à jour n’a pas été déployée depuis cet environnement, qui n’a pas d’accès Cloudflare.
+
+## Formulaire et messages vendeurs
+Appliquer aussi `0003_announcement_messages.sql` sur la base D1 existante, puis fusionner et déployer les handlers : `POST /announcements/ID/messages` (public, annonce publiée obligatoire) et `GET /me/announcement-messages` (session obligatoire, propriétaire uniquement).
+Les messages sont conservés dans `announcement_messages`, accessibles au vendeur via **Mon compte → Messages reçus**. Le destinataire vient exclusivement de l’annonce en D1. Validation partagée, champ piège et insertion conditionnelle atomique : au maximum 5 messages par email et 20 par IP par heure (si l’IP n’est pas disponible, plafond commun de sécurité).
+La réponse 201 n’est retournée qu’après insertion. Avant déploiement, le formulaire indique explicitement que l’envoi a échoué ; aucune réussite fictive. Aucun email automatique n’est envoyé (aucun domaine expéditeur vérifié). Vérifier après déploiement : envoyer un message de test, le relire dans le compte propriétaire, refuser la lecture à un autre compte, puis supprimer seulement le message de test par son ID.

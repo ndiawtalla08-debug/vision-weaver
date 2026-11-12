@@ -1,4 +1,6 @@
 # TOUT∞SUITE ANNONCES
+- [x] Préparer le formulaire sécurisé et la boîte de réception vendeur D1 ; 17 tests réussis et refus honnête de l’envoi vérifié sur l’API réelle.
+- [ ] Vérifier envoi et lecture propriétaire réels : déploiement Cloudflare et migration 0003 nécessaires ; aucun accès de déploiement disponible ici.
 - [x] Préparer les contacts publics des annonces dans D1 et l’API avec contrôle propriétaire ; tests de validation et confidentialité réussis.
 - [x] Ajouter et vérifier les annonces similaires sur les pages détail ; navigation réelle et mobile validés.
 - [x] Ajouter les pages individuelles des annonces, galerie et caractéristiques ; liens directs, mobile et 9 tests vérifiés ; bouton contact disponible uniquement si coordonnées publiques fournies.

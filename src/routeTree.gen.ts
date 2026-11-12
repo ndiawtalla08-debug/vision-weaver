@@ -21,6 +21,7 @@ import { Route as CreerBoutiqueRouteImport } from './routes/creer-boutique'
 import { Route as FavorisRouteImport } from './routes/favoris'
 import { Route as FicheProduitIaRouteImport } from './routes/fiche-produit-ia'
 import { Route as MesProduitsRouteImport } from './routes/mes-produits'
+import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as MonCompteRouteImport } from './routes/mon-compte'
 import { Route as PaiementRouteImport } from './routes/paiement'
 import { Route as PanierRouteImport } from './routes/panier'
@@ -91,6 +92,11 @@ const MesProduitsRoute = MesProduitsRouteImport.update({
   path: '/mes-produits',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MonCompteRoute = MonCompteRouteImport.update({
   id: '/mon-compte',
   path: '/mon-compte',
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/favoris': typeof FavorisRoute
   '/fiche-produit-ia': typeof FicheProduitIaRoute
   '/mes-produits': typeof MesProduitsRoute
+  '/messages': typeof MessagesRoute
   '/mon-compte': typeof MonCompteRoute
   '/paiement': typeof PaiementRoute
   '/panier': typeof PanierRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/favoris': typeof FavorisRoute
   '/fiche-produit-ia': typeof FicheProduitIaRoute
   '/mes-produits': typeof MesProduitsRoute
+  '/messages': typeof MessagesRoute
   '/mon-compte': typeof MonCompteRoute
   '/paiement': typeof PaiementRoute
   '/panier': typeof PanierRoute
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   '/favoris': typeof FavorisRoute
   '/fiche-produit-ia': typeof FicheProduitIaRoute
   '/mes-produits': typeof MesProduitsRoute
+  '/messages': typeof MessagesRoute
   '/mon-compte': typeof MonCompteRoute
   '/paiement': typeof PaiementRoute
   '/panier': typeof PanierRoute
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/favoris'
     | '/fiche-produit-ia'
     | '/mes-produits'
+    | '/messages'
     | '/mon-compte'
     | '/paiement'
     | '/panier'
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/favoris'
     | '/fiche-produit-ia'
     | '/mes-produits'
+    | '/messages'
     | '/mon-compte'
     | '/paiement'
     | '/panier'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/favoris'
     | '/fiche-produit-ia'
     | '/mes-produits'
+    | '/messages'
     | '/mon-compte'
     | '/paiement'
     | '/panier'
@@ -292,6 +304,7 @@ export interface RootRouteChildren {
   FavorisRoute: typeof FavorisRoute
   FicheProduitIaRoute: typeof FicheProduitIaRoute
   MesProduitsRoute: typeof MesProduitsRoute
+  MessagesRoute: typeof MessagesRoute
   MonCompteRoute: typeof MonCompteRoute
   PaiementRoute: typeof PaiementRoute
   PanierRoute: typeof PanierRoute
@@ -389,6 +402,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MesProduitsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mon-compte': {
       id: '/mon-compte'
       path: '/mon-compte'
@@ -468,6 +488,7 @@ const rootRouteChildren: RootRouteChildren = {
   FavorisRoute: FavorisRoute,
   FicheProduitIaRoute: FicheProduitIaRoute,
   MesProduitsRoute: MesProduitsRoute,
+  MessagesRoute: MessagesRoute,
   MonCompteRoute: MonCompteRoute,
   PaiementRoute: PaiementRoute,
   PanierRoute: PanierRoute,

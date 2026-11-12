@@ -1,3 +1,4 @@
+import type { D1Database } from '@cloudflare/workers-types'
 export interface Env { DB: D1Database; ALLOWED_ORIGINS: string }
 export type User = { id: string; email: string; role: 'user' | 'seller' | 'admin' }
 export type Ctx = { req: Request; env: Env; url: URL; params: Record<string, string>; user: User | null }

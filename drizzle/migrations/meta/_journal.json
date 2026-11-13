@@ -8,6 +8,13 @@
       "when": 1791597564173,
       "tag": "0000_create_products",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794583973259,
+      "tag": "0001_restrict_products_insert",
+      "breakpoints": true
     }
   ]
 }

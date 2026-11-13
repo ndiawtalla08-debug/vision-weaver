@@ -10,16 +10,16 @@ const srKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 const opts = { auth: { persistSession: false } }
 const marker = `TEST E2E ${Date.now()}`
 const listing = { title: marker, description: 'Fiche simulée pour test.', highlights: ['Solide'], specifications: ['Coton'], tags: ['test'] }
-const saved: string[] = []
+const saved = []
 
 vi.mock('@tanstack/react-start', () => ({
-  createServerFn: () => { const c: any = { inputValidator: () => c, handler: () => c }; return c },
-  useServerFn: (fn: unknown) => fn,
+  createServerFn: () => { const c = { inputValidator: () => c, handler: () => c }; return c },
+  useServerFn: (fn) => fn,
 }))
 vi.mock('@/lib/listing.functions', () => ({
   generateListing: async () => ({ ok: true, listing }),
-  saveListing: async ({ data }: any) => {
-    const admin = createClient(url, srKey!, opts)
+  saveListing: async ({ data }) => {
+    const admin = createClient(url, srKey, opts)
     const { data: row, error } = await admin.from('products').insert({ name: data.input.name, title: data.listing.title, description: data.listing.description, price: Number(data.input.price), category: data.input.category, highlights: data.listing.highlights, specifications: data.listing.specifications, tags: data.listing.tags, image_data: data.input.image }).select('id').single()
     if (error) return { ok: false, error: 'Enregistrement impossible, réessayez.' }
     saved.push(row.id); return { ok: true }
@@ -43,7 +43,7 @@ describe('bouton « Enregistrer dans le catalogue »', () => {
       const { data } = await anon.from('products').select('title,price,category').eq('id', saved[0])
       expect(data).toEqual([{ title: marker, price: 15000, category: 'Mode' }])
     } finally {
-      await createClient(url, srKey!, opts).from('products').delete().in('id', saved)
+      await createClient(url, srKey, opts).from('products').delete().in('id', saved)
     }
   }, 20000)
 })

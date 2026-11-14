@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Heart, ImageOff, MapPin, RefreshCw, Search } from 'lucide-react'
+import { Heart, Megaphone, MapPin, RefreshCw, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { useD1Catalog } from '@/lib/d1-catalog'
@@ -10,7 +10,7 @@ import { formatMoney } from '@/lib/catalog'
 export function AnnouncementPhoto({ src, title, className = '' }: { src: string; title: string; className?: string }) {
   const [failed, setFailed] = useState(false)
   return <div className={`aspect-[4/3] overflow-hidden bg-secondary ${className}`}>
-    {src && !failed ? <img src={src} alt={title} loading="lazy" className="h-full w-full object-contain" onError={() => setFailed(true)}/> : <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground"><ImageOff className="size-8"/><span className="text-sm">Photo indisponible</span></div>}
+    {src && !failed ? <img src={src} alt={title} loading="lazy" className="h-full w-full object-contain" onError={() => setFailed(true)}/> : <div role="img" aria-label={`${title} — aucune photo`} className="flex h-full flex-col items-center justify-center gap-2 bg-muted text-muted-foreground"><span className="flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground"><Megaphone className="size-7"/></span><span className="text-xs font-semibold tracking-widest">TOUT∞SUITE</span><span className="text-xs">Aucune photo</span></div>}
   </div>
 }
 

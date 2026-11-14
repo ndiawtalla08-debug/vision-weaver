@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "events": {
+    "project.home_announcement_clicked": {
+      "event_schema_version": 1,
+      "description": "A visitor clicked an announcement card in the home page's latest listings.",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "announcement_id",
+          "position"
+        ],
+        "properties": {
+          "announcement_id": {
+            "type": "string"
+          },
+          "position": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "project.home_announcement_viewed": {
+      "event_schema_version": 1,
+      "description": "An announcement card in the home page's latest listings became at least half visible (once per card per page load).",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "announcement_id",
+          "position"
+        ],
+        "properties": {
+          "announcement_id": {
+            "type": "string"
+          },
+          "position": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

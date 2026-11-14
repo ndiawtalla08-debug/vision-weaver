@@ -11,10 +11,12 @@ export function buildDirectory(shops: Shop[], products: Product[]): DirectorySho
     return { ...shop, productCount: own.length, categories, category: shop.category || categories.join(' · ') }
   })
 }
-export function filterDirectory(list: DirectoryShop[], q: string, category: string, sort: ShopSort) {
+export function filterDirectory(list: DirectoryShop[], q: string, category: string, sort: ShopSort, name = '') {
   const t = q.trim().toLowerCase()
+  const n = name.trim().toLowerCase()
   return list
     .filter(s => !t || `${s.name} ${s.category} ${s.subtitle}`.toLowerCase().includes(t))
+    .filter(s => !n || s.name.toLowerCase().includes(n))
     .filter(s => !category || s.categories.includes(category))
     .sort((a, b) => sort === 'name' ? a.name.localeCompare(b.name, 'fr') : b.productCount - a.productCount || a.name.localeCompare(b.name, 'fr'))
 }

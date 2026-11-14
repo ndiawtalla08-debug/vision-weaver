@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { Search, X } from 'lucide-react'
 import { Button } from './ui/button'
 import { ShopCard } from './marketplace'
@@ -7,13 +8,21 @@ import { buildDirectory, filterDirectory, type ShopSort } from '@/lib/store-dire
 
 export function StoreDirectory({ q, setQ }: { q: string; setQ: (v: string) => void }) {
   const { products, shops } = useMarket()
-  const [category, setCategory] = useState('')
-  const [sort, setSort] = useState<ShopSort>('products')
+  const search = useSearch({ from: '/boutiques' })
+  const navigate = useNavigate({ from: '/boutiques' })
+  const category = search.categorie ?? ''
+  const name = search.nom ?? ''
+  const sort: ShopSort = search.tri === 'nom' ? 'name' : 'products'
+  // Filters live in the URL so a precise view can be shared; typing replaces history.
+  const update = (patch: { nom?: string | undefined; categorie?: string | undefined; tri?: 'nom' | undefined }) => void navigate({ search: prev => ({ ...prev, ...patch }) as never, replace: true, resetScroll: false })
+  const setCategory = (c: string) => update({ categorie: c || undefined })
+  const setSort = (s: ShopSort) => update({ tri: s === 'name' ? 'nom' : undefined })
   const all = useMemo(() => buildDirectory(shops, products), [shops, products])
   const cats = useMemo(() => [...new Set(all.flatMap(s => s.categories))].sort((a, b) => a.localeCompare(b, 'fr')), [all])
-  const list = filterDirectory(all, q, category, sort)
-  const reset = () => { setQ(''); setCategory('') }
+  const list = filterDirectory(all, q, category, sort, name)
+  const reset = () => { setQ(''); update({ nom: undefined, categorie: undefined }) }
   return <section aria-label="Annuaire des boutiques">
+    <div className="mb-4 flex max-w-md gap-2"><input className="form-input" type="search" placeholder="Nom de la boutique…" aria-label="Rechercher une boutique par son nom" value={name} onChange={e => update({ nom: e.target.value.slice(0, 100) || undefined })}/></div>
     <div className="mb-4 flex flex-wrap items-center gap-2">
       <Button size="sm" variant={category ? 'outline' : 'default'} onClick={() => setCategory('')}>Toutes</Button>
       {cats.map(c => <Button key={c} size="sm" variant={category === c ? 'default' : 'outline'} aria-pressed={category === c} onClick={() => setCategory(category === c ? '' : c)}>{c}</Button>)}

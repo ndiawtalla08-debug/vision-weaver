@@ -14,3 +14,11 @@ describe('annuaire des boutiques', () => {
     expect(filterDirectory(dir, '', '', 'name').map(s => s.name)).toEqual(['SO FAB CLOSET', 'TECH DAKAR', 'TOUBA ESSENCE'])
   })
 })
+
+describe('recherche par nom', () => {
+  it('ne garde que les boutiques dont le nom correspond', () => {
+    const dir = buildDirectory(shops, products)
+    expect(filterDirectory(dir, '', '', 'products', 'tech').map(s => s.id)).toEqual(['tech-dakar'])
+    expect(filterDirectory(dir, '', '', 'products', 'parfums')).toEqual([])
+  })
+})

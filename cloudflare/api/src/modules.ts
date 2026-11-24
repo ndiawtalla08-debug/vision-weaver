@@ -2,9 +2,13 @@ import { body, HttpError, id, int, json, hashPassword, requireAdmin, requireStor
 import { productRoutes } from './products'
 import { sendAnnouncementMessage, readAnnouncementMessages } from './announcement-messages'
 import { publicContacts } from './announcement-contacts'
+import { googleAuthRoutes } from './google-auth'
 
 type Handler = (c: Ctx) => Promise<Response>
-export const routes: [string, string, Handler][] = [...productRoutes]
+export const routes: [string, string, Handler][] = [
+  ...productRoutes,
+  ...googleAuthRoutes
+]
 const r = (method: string, path: string, h: Handler) => routes.push([method, path, h])
 const SESSION_DAYS = 30
 

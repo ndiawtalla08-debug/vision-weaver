@@ -49,7 +49,22 @@ export function ProfileForm({ profile, onSaved }: { profile: Profile; onSaved: (
     const parsed = profileUpdateSchema.safeParse({ full_name: String(f.get('full_name') ?? ''), phone: String(f.get('phone') ?? ''), city: String(f.get('city') ?? '') })
     if (!parsed.success) return setError(parsed.error.issues[0]?.message ?? 'Informations invalides.')
     setBusy(true); setError(null)
-    try { const r = await save({ data: parsed.data }); if (r.profile) { onSaved(r.profile); setOpen(false); setOk(true) } else setError(r.error) }
+    try {
+  const r = await save({ data: parsed.data });
+
+  if (r.profile) {
+    onSaved({
+      full_name: r.profile.full_name ?? null,
+      phone: r.profile.phone ?? null,
+      city: r.profile.city ?? null,
+    });
+
+    setOpen(false);
+    setOk(true);
+  } else {
+    setError(r.error);
+  }
+}
     catch { setError('Impossible d’enregistrer votre profil.') } finally { setBusy(false) }
   }}>
     <label className="block text-sm">Nom complet<input name="full_name" className="form-input mt-1" required maxLength={120} defaultValue={profile?.full_name ?? ''} autoComplete="name"/></label>

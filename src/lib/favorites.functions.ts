@@ -60,3 +60,29 @@ export const logoutD1 = createServerFn({ method: 'POST' }).handler(async () => {
   catch (error) { return { error: error instanceof D1AccessError && error.status === 401 ? null : 'La session locale a été fermée, mais sa révocation D1 n’a pas pu être confirmée.' } }
   finally { clearD1Token() }
 })
+
+export const exchangeGoogleCode = createServerFn({ method: 'POST' })
+  .inputValidator(input =>
+    z.object({
+      code: z.string().min(1).max(200),
+    }).parse(input)
+  )
+  .handler(async ({ data }) => {
+    try {
+      const result = sessionSchema.parse(
+        await d1Request('/auth/google/exchange', undefined, 'POST', {
+          code: data.code,
+        })
+      )
+
+      storeD1Token(result.token, result.expires_at)
+
+      return { error: null }
+    } catch (error) {
+      return {
+        error: error instanceof D1AccessError
+          ? error.message
+          : 'Connexion Google impossible. Veuillez réessayer.',
+      }
+    }
+  })

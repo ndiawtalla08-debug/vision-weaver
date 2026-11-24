@@ -3,8 +3,11 @@ main = "src/index.ts"
 compatibility_date = "2026-10-01"
 
 [vars]
-# Adresse du site autorisée à appeler l'API (séparer par des virgules).
-ALLOWED_ORIGINS = "https://vision-display-store.lovable.app"
+# Sites autorisés à communiquer avec l'API
+ALLOWED_ORIGINS = "https://toutsuiteannonces.com,https://vision-display-store.lovable.app"
+
+# Configuration Google OAuth
+GOOGLE_CLIENT_ID = "1071299259299-4vh6besjus6fk1sb757ceovfb9977jph.apps.googleusercontent.com"
 
 # Base D1 existante (ne pas en créer une nouvelle).
 [[d1_databases]]

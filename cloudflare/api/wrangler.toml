@@ -15,3 +15,7 @@ binding = "DB"
 database_name = "toutsuite-annonces-db"
 database_id = "5ec829c9-4e94-4ec7-92e1-41e1173bc239"
 migrations_dir = "migrations"
+   # Stockage des images avec Cloudflare R2
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "toutsuite-annonces-images"

@@ -320,3 +320,23 @@ export const readStoreProducts = createServerFn({ method: 'GET' })
       }
     }
   })
+/* =========================================================
+   GALERIE PUBLIQUE D'UN PRODUIT (GET /products/:id, ordre position)
+========================================================= */
+
+export const readProductImages = createServerFn({ method: 'GET' })
+  .inputValidator(input => z.object({ id: d1Identifier }).strict().parse(input))
+  .handler(async ({ data }): Promise<{ images: string[] }> => {
+    try {
+      const response = await fetch(`${d1BaseUrl}/products/${encodeURIComponent(data.id)}`, {
+        signal: AbortSignal.timeout(15000),
+      })
+      if (!response.ok) return { images: [] }
+      const { images } = z
+        .object({ images: z.array(z.object({ url: z.string(), position: z.number() })) })
+        .parse(await response.json())
+      return { images: [...images].sort((a, b) => a.position - b.position).map(i => i.url) }
+    } catch {
+      return { images: [] }
+    }
+  })

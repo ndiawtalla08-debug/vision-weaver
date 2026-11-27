@@ -6,6 +6,9 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/compone
 import { formatMoney, cartTotals, type CartItem, type Product, type Shop } from '@/lib/catalog'
 
 import { useD1Catalog } from '@/lib/d1-catalog'
+import { useQuery } from '@tanstack/react-query'
+import { readProductImages } from '@/lib/d1-products.functions'
+import { productImageUrl } from '@/lib/api-client'
 import { useD1Favorites } from '@/hooks/use-d1-favorites'
 import { useSavedProducts } from '@/lib/saved-products'
 
@@ -54,7 +57,10 @@ export function ShopCard({ shop }: { shop: Shop }) { return <Link to="/boutique/
 export function ProductCard({ product, showDescription = false }: { product: Product; showDescription?: boolean }) { const { favoriteState,favorites,toggle,add,openProduct } = useMarket(); return <article className="product-card"><Link to="/produit/$id" params={{ id: product.id }} className="product-image">{product.image ? <img src={product.image} alt={product.name} loading="lazy" width={512} height={512}/> : <Package className="m-auto size-16 text-muted-foreground"/>}</Link>{product.discount > 0 && <span className="product-discount">−{product.discount} %</span>}<Button variant="ghost" size="icon" className="product-favorite" aria-label={`Favori : ${product.name}`} disabled={favoriteState.busy || favoriteState.loading} aria-pressed={favorites.includes(product.id)} onClick={() => toggle(product.id)}><Heart className={favorites.includes(product.id) ? 'fill-destructive text-destructive' : ''}/></Button><div className="product-info"><div className="product-store">{product.store}</div><h3><Link to="/produit/$id" params={{ id: product.id }}>{product.name}</Link></h3><div><span className="price">{formatMoney(product.price)}</span>{product.oldPrice > 0 && <span className="old-price">{formatMoney(product.oldPrice)}</span>}</div>{showDescription && product.description && <p className="my-3 whitespace-pre-wrap text-sm text-muted-foreground">{product.description}</p>}<div className="product-bottom"><span className="product-rating"><Star/>{product.rating} <span className="text-muted-foreground">· {product.stock > 0 ? 'En stock' : 'Rupture de stock'}</span></span><Button variant="dark" size="icon" className="size-7 rounded" aria-label={`Ajouter ${product.name} au panier`} disabled={product.stock < 1} onClick={() => product.category === 'Mode' && product.id.includes('robe') ? openProduct(product) : add(product)}><ShoppingCart className="size-3.5"/></Button></div></div></article> }
 /** Galerie publique : photo principale (position 0) puis les autres, dans l'ordre. */
 export function ProductGallery({ product }: { product: Product }) {
-  const gallery = product.images?.length ? product.images : [product.image]
+  const isD1 = /^[A-Za-z0-9_-]{1,64}$/.test(product.id) 
+  const remote = useQuery({ queryKey: ['product-images', product.id], queryFn: () => readProductImages({ data: { id: product.id } }), enabled: isD1, staleTime: 60000 })
+  const remoteImages = (remote.data?.images ?? []).map(src => productImageUrl(src))
+  const gallery = remoteImages.length > (product.images?.length ?? 0) ? remoteImages : product.images?.length ? product.images : [product.image]
   const [active, setActive] = useState(0)
   const current = gallery[Math.min(active, gallery.length - 1)] ?? product.image
   return <div><img className="detail-image" src={current} alt={product.name} width={512} height={512}/>{gallery.length > 1 && <div className="mt-3 flex flex-wrap gap-2" aria-label="Photos du produit">{gallery.map((src, index) => <button key={`${src}-${index}`} type="button" onClick={() => setActive(index)} aria-label={`Photo ${index + 1} sur ${gallery.length}`} aria-pressed={index === active} className={`size-16 overflow-hidden rounded-md border-2 ${index === active ? 'border-primary' : 'border-border'}`}><img src={src} alt="" className="size-full object-cover"/></button>)}</div>}</div>

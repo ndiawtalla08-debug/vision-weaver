@@ -146,34 +146,20 @@ export function SellerProducts() {
       setError(`Vous ne pouvez ajouter que ${remaining} photo(s) supplémentaire(s).`)
     }
 
-    const validFiles = selected.filter(file => {
-      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-        setError('Format accepté : JPG, PNG ou WebP. Une photo invalide a été ignorée.')
-        return false
-      }
-      if (file.size > 500000) {
-        setError('Chaque photo doit faire 500 Ko maximum. Une photo trop volumineuse a été ignorée.')
-        return false
-      }
-      return true
-    })
-
-    if (!validFiles.length) return
+    const validFiles = selected.filter(file =>
+      ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
+    )
+    const ignored = selected.length - validFiles.length
+    if (!validFiles.length) {
+      setError('Format accepté : JPG, PNG ou WebP.')
+      return
+    }
 
     setBusy(true)
     try {
-      const values = await Promise.all(
-        validFiles.map(file =>
-          new Promise<string>((resolve, reject) => {
-            const reader = new FileReader()
-            reader.onload = () =>
-              typeof reader.result === 'string' ? resolve(reader.result) : reject()
-            reader.onerror = reject
-            reader.readAsDataURL(file)
-          }),
-        ),
-      )
-
+      // Les photos de téléphone (souvent plusieurs Mo) sont réduites dans le
+      // navigateur au lieu d'être ignorées en silence.
+      const values = await Promise.all(validFiles.map(compressPhoto))
       setForm(current =>
         current
           ? {
@@ -183,7 +169,13 @@ export function SellerProducts() {
             }
           : current,
       )
-      setError(null)
+      setError(
+        ignored
+          ? `${ignored} photo(s) ignorée(s) : format accepté JPG, PNG ou WebP.`
+          : files.length > remaining
+            ? `Vous ne pouvez ajouter que ${remaining} photo(s) supplémentaire(s).`
+            : null,
+      )
     } catch {
       setError('Impossible de lire une ou plusieurs photos.')
     } finally {
@@ -694,4 +686,28 @@ export function SellerProducts() {
       )}
     </main>
   )
+}
+
+const readDataUrl = (file: Blob) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => (typeof reader.result === 'string' ? resolve(reader.result) : reject())
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+
+/** Photo ≤ 500 Ko gardée telle quelle ; sinon réduite (1600 px max, JPEG). */
+async function compressPhoto(file: File): Promise<string> {
+  if (file.size <= 500_000) return readDataUrl(file)
+  const bitmap = await createImageBitmap(file)
+  for (const [max, quality] of [[1600, 0.82], [1200, 0.75], [900, 0.7]] as const) {
+    const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(bitmap.width * scale)
+    canvas.height = Math.round(bitmap.height * scale)
+    canvas.getContext('2d')?.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+    const blob = await new Promise<Blob | null>(r => canvas.toBlob(r, 'image/jpeg', quality))
+    if (blob && blob.size <= 1_500_000) return readDataUrl(blob)
+  }
+  throw new Error('Photo trop volumineuse')
 }

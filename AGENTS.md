@@ -25,3 +25,4 @@
 - Announcement detail routes use the published D1 catalog until a public detail endpoint exists; contact links use only explicitly public contact fields and never expose private user profiles.
 - Store public announcement contacts separately from account profiles with owner-checked writes; similar offers rank published catalog entries by category then location, excluding the current announcement.
 - Announcement contact forms persist to D1 with recipients derived from published announcements, atomic rate limits and session-scoped seller inbox reads; never report delivery before a successful insert or send unconfigured email notifications.
+- Personal announcements are managed in "Mes annonces" via owner-scoped Worker routes (my-announcements.ts); drafts are a private flag separate from moderation status, and any owner edit of a non-draft returns it to validation.

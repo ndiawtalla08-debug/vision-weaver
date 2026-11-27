@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Sparkles,
   BadgeCheck,
+  Megaphone,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -403,6 +404,12 @@ function ProfileCard({
   ]
 
   const actions = [
+    {
+      to: '/mes-annonces' as const,
+      icon: Megaphone,
+      title: 'Mes annonces',
+      text: 'Créez, publiez et gérez vos annonces.',
+    },
     {
       to: '/messages' as const,
       icon: MessageSquare,

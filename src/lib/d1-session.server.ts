@@ -9,6 +9,9 @@ export const userSchema = z.object({ id: z.string(), email: z.string() })
 export class D1AccessError extends Error { constructor(public status: number, message: string) { super(message) } }
 type D1Path =
   | '/me/announcement-messages'
+  | '/me/announcements'
+  | '/announcements'
+  | `/announcements/${string}`
   | `/announcements/${string}/messages`
   | '/me'
   | '/favorites'
@@ -31,7 +34,7 @@ export async function d1Request(path: D1Path, token?: string, method = 'GET', bo
     if (!(e instanceof ApiError)) throw e
     const response = e
     // Do not log auth response bodies: a provider could echo credentials.
-    throw new D1AccessError(response.status, response.status === 404 && (path === '/my/products' || path.startsWith('/me/stores') || path.startsWith('/me/products') || method === 'PATCH' && path.startsWith('/products/')) ? 'La gestion des produits nécessite la mise à jour de votre API Cloudflare.' : response.status === 404 ? 'Produit ou boutique introuvable.' : response.status === 409 ? 'Cette valeur existe déjà.' : response.status === 400 ? 'Les informations envoyées sont invalides.' : response.status === 401 ? 'Connexion requise ou session expirée.' : response.status === 403 ? 'Vous n’avez pas accès à cette boutique.' : 'Le service D1 est momentanément indisponible.')
+    throw new D1AccessError(response.status, response.status === 404 && (path === '/my/products' || path.startsWith('/me/stores') || path.startsWith('/me/products') || path === '/me/announcements' || (method !== 'GET' && path.startsWith('/announcements')) || method === 'PATCH' && path.startsWith('/products/')) ? (path.includes('announcements') ? 'La gestion des annonces nécessite la mise à jour de votre API Cloudflare.' : 'La gestion des produits nécessite la mise à jour de votre API Cloudflare.') : response.status === 404 ? 'Produit ou boutique introuvable.' : response.status === 409 ? 'Cette valeur existe déjà.' : response.status === 400 ? 'Les informations envoyées sont invalides.' : response.status === 401 ? 'Connexion requise ou session expirée.' : response.status === 403 ? 'Vous n’avez pas accès à cette boutique.' : 'Le service D1 est momentanément indisponible.')
   }
 }
 export async function requireD1Session() {

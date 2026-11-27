@@ -20,6 +20,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CreerBoutiqueRouteImport } from './routes/creer-boutique'
 import { Route as FavorisRouteImport } from './routes/favoris'
 import { Route as FicheProduitIaRouteImport } from './routes/fiche-produit-ia'
+import { Route as MesAnnoncesRouteImport } from './routes/mes-annonces'
 import { Route as MesProduitsRouteImport } from './routes/mes-produits'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as MonCompteRouteImport } from './routes/mon-compte'
@@ -85,6 +86,11 @@ const FavorisRoute = FavorisRouteImport.update({
 const FicheProduitIaRoute = FicheProduitIaRouteImport.update({
   id: '/fiche-produit-ia',
   path: '/fiche-produit-ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MesAnnoncesRoute = MesAnnoncesRouteImport.update({
+  id: '/mes-annonces',
+  path: '/mes-annonces',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MesProduitsRoute = MesProduitsRouteImport.update({
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/creer-boutique': typeof CreerBoutiqueRoute
   '/favoris': typeof FavorisRoute
   '/fiche-produit-ia': typeof FicheProduitIaRoute
+  '/mes-annonces': typeof MesAnnoncesRoute
   '/mes-produits': typeof MesProduitsRoute
   '/messages': typeof MessagesRoute
   '/mon-compte': typeof MonCompteRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/creer-boutique': typeof CreerBoutiqueRoute
   '/favoris': typeof FavorisRoute
   '/fiche-produit-ia': typeof FicheProduitIaRoute
+  '/mes-annonces': typeof MesAnnoncesRoute
   '/mes-produits': typeof MesProduitsRoute
   '/messages': typeof MessagesRoute
   '/mon-compte': typeof MonCompteRoute
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/creer-boutique': typeof CreerBoutiqueRoute
   '/favoris': typeof FavorisRoute
   '/fiche-produit-ia': typeof FicheProduitIaRoute
+  '/mes-annonces': typeof MesAnnoncesRoute
   '/mes-produits': typeof MesProduitsRoute
   '/messages': typeof MessagesRoute
   '/mon-compte': typeof MonCompteRoute
@@ -230,6 +239,7 @@ export interface FileRouteTypes {
     | '/creer-boutique'
     | '/favoris'
     | '/fiche-produit-ia'
+    | '/mes-annonces'
     | '/mes-produits'
     | '/messages'
     | '/mon-compte'
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/creer-boutique'
     | '/favoris'
     | '/fiche-produit-ia'
+    | '/mes-annonces'
     | '/mes-produits'
     | '/messages'
     | '/mon-compte'
@@ -278,6 +289,7 @@ export interface FileRouteTypes {
     | '/creer-boutique'
     | '/favoris'
     | '/fiche-produit-ia'
+    | '/mes-annonces'
     | '/mes-produits'
     | '/messages'
     | '/mon-compte'
@@ -303,6 +315,7 @@ export interface RootRouteChildren {
   CreerBoutiqueRoute: typeof CreerBoutiqueRoute
   FavorisRoute: typeof FavorisRoute
   FicheProduitIaRoute: typeof FicheProduitIaRoute
+  MesAnnoncesRoute: typeof MesAnnoncesRoute
   MesProduitsRoute: typeof MesProduitsRoute
   MessagesRoute: typeof MessagesRoute
   MonCompteRoute: typeof MonCompteRoute
@@ -393,6 +406,13 @@ declare module '@tanstack/react-router' {
       path: '/fiche-produit-ia'
       fullPath: '/fiche-produit-ia'
       preLoaderRoute: typeof FicheProduitIaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mes-annonces': {
+      id: '/mes-annonces'
+      path: '/mes-annonces'
+      fullPath: '/mes-annonces'
+      preLoaderRoute: typeof MesAnnoncesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mes-produits': {
@@ -487,6 +507,7 @@ const rootRouteChildren: RootRouteChildren = {
   CreerBoutiqueRoute: CreerBoutiqueRoute,
   FavorisRoute: FavorisRoute,
   FicheProduitIaRoute: FicheProduitIaRoute,
+  MesAnnoncesRoute: MesAnnoncesRoute,
   MesProduitsRoute: MesProduitsRoute,
   MessagesRoute: MessagesRoute,
   MonCompteRoute: MonCompteRoute,

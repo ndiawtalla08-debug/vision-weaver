@@ -697,7 +697,7 @@ const readDataUrl = (file: Blob) =>
   })
 
 /** Photo ≤ 500 Ko gardée telle quelle ; sinon réduite (1600 px max, JPEG). */
-async function compressPhoto(file: File): Promise<string> {
+export async function compressPhoto(file: File): Promise<string> {
   if (file.size <= 500_000) return readDataUrl(file)
   const bitmap = await createImageBitmap(file)
   for (const [max, quality] of [[1600, 0.82], [1200, 0.75], [900, 0.7]] as const) {

@@ -3,11 +3,13 @@ import { productRoutes, saveProductImage, imageKey } from './products'
 import { sendAnnouncementMessage, readAnnouncementMessages } from './announcement-messages'
 import { publicContacts } from './announcement-contacts'
 import { googleAuthRoutes } from './google-auth'
+import { myAnnouncementRoutes, publicAnnouncementsSql, shapeAnnouncement } from './my-announcements'
 
 type Handler = (c: Ctx) => Promise<Response>
 export const routes: [string, string, Handler][] = [
   ...productRoutes,
-  ...googleAuthRoutes
+  ...googleAuthRoutes,
+  ...myAnnouncementRoutes,
 ]
 const r = (method: string, path: string, h: Handler) => routes.push([method, path, h])
 const SESSION_DAYS = 30
@@ -359,21 +361,10 @@ r('GET', '/products/:id', async c => {
 r('POST', '/announcements/:id/messages', sendAnnouncementMessage)
 r('GET', '/me/announcement-messages', readAnnouncementMessages)
 r('GET', '/announcements', async c => {
-  const { results } = await c.env.DB.prepare(`SELECT a.id, a.title, a.description, a.price, a.city, a.category_id, a.created_at, a.contact_phone, a.contact_email,
-      (SELECT url FROM announcement_images i WHERE i.announcement_id = a.id ORDER BY position LIMIT 1) AS image
-    FROM announcements a WHERE a.status = 'published' ORDER BY a.created_at DESC LIMIT 100`).all()
-  return json({ announcements: results })
+  const { results } = await c.env.DB.prepare(publicAnnouncementsSql).all()
+  return json({ announcements: results.map(shapeAnnouncement) })
 })
-r('POST', '/announcements', async c => {
-  const u = requireUser(c); const b = await body(c.req); const aid = id()
-  const contacts = publicContacts(b)
-  const title = str(b.title, 'titre', 120)
-  if (!title) throw new HttpError(400, 'Titre requis.')
-  await c.env.DB.prepare('INSERT INTO announcements (id, user_id, category_id, title, description, price, city, contact_phone, contact_email) VALUES (?,?,?,?,?,?,?,?,?)')
-    .bind(aid, u.id, str(b.category_id, 'catégorie', 64, false), title, str(b.description, 'description', 5000, false),
-      int(b.price, 'prix', false), str(b.city, 'ville', 80, false), contacts.contact_phone, contacts.contact_email).run()
-  return json({ id: aid, status: 'pending' }, 201)
-})
+// POST/PATCH/DELETE /announcements, /me/announcements et les vues : my-announcements.ts (version unique).
 r('PATCH', '/announcements/:id/contact', async c => {
   const u = requireUser(c)
   const announcementId = str(c.params['id'], 'identifiant annonce', 64)

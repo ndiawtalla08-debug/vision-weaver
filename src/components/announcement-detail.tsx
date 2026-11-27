@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { recordAnnouncementView } from '@/lib/my-announcements.functions'
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft, ChevronLeft, ChevronRight, Heart, MapPin, Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -14,6 +15,8 @@ export function AnnouncementDetail({ id }: { id: string }) {
   const { favoriteState } = useMarket()
   const [index, setIndex] = useState(0)
   const a = announcements.find(item => item.id === id)
+  // Une vue par affichage de la page (compteur visible dans « Mes annonces »).
+  useEffect(() => { if (a) void recordAnnouncementView({ data: { id } }).catch(() => undefined) }, [id, !!a])
   if (!a) return null
   const photos = [...new Set([a.image, ...a.images].filter(Boolean))]
   const contact = announcementContact(a)

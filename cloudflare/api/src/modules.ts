@@ -1,5 +1,5 @@
 import { body, HttpError, id, int, json, hashPassword, requireAdmin, requireStoreManager, requireUser, safeEqual, sha256, str, type Ctx } from './lib'
-import { productRoutes, saveProductImage } from './products'
+import { productRoutes, saveProductImage, imageKey } from './products'
 import { sendAnnouncementMessage, readAnnouncementMessages } from './announcement-messages'
 import { publicContacts } from './announcement-contacts'
 import { googleAuthRoutes } from './google-auth'
@@ -274,15 +274,24 @@ r('PATCH', '/products/:id', async c => {
   ]
 
   let removedImages: string[] = []
+  const newUploads: string[] = []
   if (imageProvided || imagesProvided) {
     const uploadedImages: string[] = []
     const previous = await c.env.DB.prepare(
       'SELECT url FROM product_images WHERE product_id = ?'
     ).bind(product.id).all<{ url: string }>()
 
+    const previousUrls = (previous.results ?? []).map(row => row.url)
+    // Une photo conservée doit déjà appartenir à ce produit (évite de lier
+    // ou de supprimer la photo R2 d'un autre produit).
+    if (images.some(image => !image.startsWith('data:image/') && !previousUrls.includes(image))) {
+      throw new HttpError(400, 'Photo existante inconnue pour ce produit.')
+    }
     for (const image of images) {
       if (image.startsWith('data:image/')) {
-        uploadedImages.push(await saveProductImage(c, image))
+        const url = await saveProductImage(c, image)
+        newUploads.push(url)
+        uploadedImages.push(url)
       } else {
         uploadedImages.push(image)
       }
@@ -312,11 +321,20 @@ r('PATCH', '/products/:id', async c => {
     }
   }
 
-  await c.env.DB.batch(statements)
+  try {
+    await c.env.DB.batch(statements)
+  } catch (e) {
+    // D1 a échoué : les nouvelles photos R2 sont retirées, les anciennes restent intactes.
+    for (const url of newUploads) {
+      const key = imageKey(url)
+      if (key) await c.env.IMAGES.delete(key).catch(() => undefined)
+    }
+    throw e
+  }
 
   // Nettoyage R2 des photos retirées de la galerie (après succès D1)
   for (const url of removedImages) {
-    const key = url.match(/\/images\/([A-Za-z0-9_-]{1,64})$/)?.[1]
+    const key = imageKey(url)
     if (key) await c.env.IMAGES.delete(key).catch(() => undefined)
   }
 
@@ -326,15 +344,7 @@ r('PATCH', '/products/:id', async c => {
     status: b['status'] ?? product.status,
   })
 })
-r('GET', '/products', async c => {
-  const store = c.url.searchParams.get('store'); const cat = c.url.searchParams.get('category')
-  const { results } = await c.env.DB.prepare(`SELECT p.id, p.store_id, p.category_id, p.name, p.description, p.price, p.old_price, p.stock,
-      (SELECT url FROM product_images i WHERE i.product_id = p.id ORDER BY position LIMIT 1) AS image
-    FROM products p JOIN stores s ON s.id = p.store_id
-    WHERE p.status = 'published' AND s.status = 'active' AND (?1 IS NULL OR p.store_id = ?1) AND (?2 IS NULL OR p.category_id = ?2)
-    ORDER BY p.created_at DESC LIMIT 100`).bind(store, cat).all()
-  return json({ products: results })
-})
+// GET /products (liste publique) : défini dans products.ts (version unique).
 r('GET', '/products/:id', async c => {
   const p = await c.env.DB.prepare(`SELECT p.* FROM products p JOIN stores s ON s.id = p.store_id WHERE p.id = ? AND p.status = 'published' AND s.status = 'active'`).bind(c.params['id']).first()
   if (!p) throw new HttpError(404, 'Produit introuvable.')

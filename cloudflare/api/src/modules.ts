@@ -273,8 +273,12 @@ r('PATCH', '/products/:id', async c => {
     ).bind(...values, product.id, product.store_id),
   ]
 
+  let removedImages: string[] = []
   if (imageProvided || imagesProvided) {
     const uploadedImages: string[] = []
+    const previous = await c.env.DB.prepare(
+      'SELECT url FROM product_images WHERE product_id = ?'
+    ).bind(product.id).all<{ url: string }>()
 
     for (const image of images) {
       if (image.startsWith('data:image/')) {
@@ -283,6 +287,10 @@ r('PATCH', '/products/:id', async c => {
         uploadedImages.push(image)
       }
     }
+
+    removedImages = (previous.results ?? [])
+      .map(row => row.url)
+      .filter(url => !uploadedImages.includes(url))
 
     statements.push(
       c.env.DB.prepare(
@@ -305,6 +313,12 @@ r('PATCH', '/products/:id', async c => {
   }
 
   await c.env.DB.batch(statements)
+
+  // Nettoyage R2 des photos retirées de la galerie (après succès D1)
+  for (const url of removedImages) {
+    const key = url.match(/\/images\/([A-Za-z0-9_-]{1,64})$/)?.[1]
+    if (key) await c.env.IMAGES.delete(key).catch(() => undefined)
+  }
 
   return json({
     id: product.id,

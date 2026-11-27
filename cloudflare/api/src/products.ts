@@ -18,6 +18,14 @@ const identifier = (value: unknown): string => {
   return value
 }
 
+function withImages(rows: any[]) {
+  return rows.map(({ images_json, ...row }) => {
+    let images: string[] = []
+    try { images = JSON.parse(images_json || '[]').filter((u: unknown) => typeof u === 'string') } catch {}
+    return { ...row, images }
+  })
+}
+
 async function storeAccess(c: Ctx, storeId: string) {
   return await (await import('./lib')).requireStoreManager(c, storeId)
 }
@@ -52,7 +60,8 @@ export async function saveProductImage(c: Ctx, image: string): Promise<string> {
     },
   })
 
-  return `https://api.toutsuiteannonces.com/images/${imageId}`
+  // URL servie par ce même Worker (route GET /images/:id)
+  return `${c.url.origin}/images/${imageId}`
 }
 
 /**
@@ -170,14 +179,21 @@ export const productRoutes: Route[] = [
             WHERE pi.product_id = p.id
             ORDER BY pi.position ASC
             LIMIT 1
-          ) AS image
+          ) AS image,
+          (
+            SELECT json_group_array(url) FROM (
+              SELECT pi.url FROM product_images pi
+              WHERE pi.product_id = p.id
+              ORDER BY pi.position ASC
+            )
+          ) AS images_json
         FROM products p
         JOIN stores s ON s.id = p.store_id
         WHERE s.owner_id = ?
         ORDER BY p.created_at DESC
       `).bind(user.id).all()
 
-      return json({ products: results })
+      return json({ products: withImages(results) })
     },
   ],
 
@@ -219,13 +235,20 @@ export const productRoutes: Route[] = [
             WHERE pi.product_id = p.id
             ORDER BY pi.position ASC
             LIMIT 1
-          ) AS image
+          ) AS image,
+          (
+            SELECT json_group_array(url) FROM (
+              SELECT pi.url FROM product_images pi
+              WHERE pi.product_id = p.id
+              ORDER BY pi.position ASC
+            )
+          ) AS images_json
         FROM products p
         WHERE p.store_id = ?
         ORDER BY p.created_at DESC
       `).bind(storeId).all()
 
-      return json({ products: results })
+      return json({ products: withImages(results) })
     },
   ],
 
@@ -247,7 +270,14 @@ export const productRoutes: Route[] = [
             WHERE pi.product_id = p.id
             ORDER BY pi.position ASC
             LIMIT 1
-          ) AS image
+          ) AS image,
+          (
+            SELECT json_group_array(url) FROM (
+              SELECT pi.url FROM product_images pi
+              WHERE pi.product_id = p.id
+              ORDER BY pi.position ASC
+            )
+          ) AS images_json
         FROM products p
         WHERE p.status = 'published'
       `
@@ -267,7 +297,7 @@ export const productRoutes: Route[] = [
         ? await statement.bind(...bindings).all()
         : await statement.all()
 
-      return json({ products: results })
+      return json({ products: withImages(results) })
     },
   ],
 
